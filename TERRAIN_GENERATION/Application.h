@@ -22,6 +22,6 @@ private:
     std::unique_ptr<Window> mWindow;
     bool mIsRunning = true;
 
-    //Camera camera;
+    Camera camera;
     Timer timer;
 };

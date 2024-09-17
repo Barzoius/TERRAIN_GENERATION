@@ -1,6 +1,8 @@
 #include "Application.h"
 #include "iostream"
 
+
+
 Application::Application()
 {
     mWindow = std::make_unique<Window>(800, 600 , "TERRAIN_GENERATION");
