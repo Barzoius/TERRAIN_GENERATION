@@ -17,6 +17,7 @@ public:
 
     inline Window* GetWindow() { return mWindow.get(); }
 
+    
 
 private:
     std::unique_ptr<Window> mWindow;
@@ -24,4 +25,6 @@ private:
 
     Camera camera;
     Timer timer;
+
+
 };
