@@ -1,6 +1,7 @@
 #include "Window.h"
 #include "Camera.h"
 #include "Timer.h"
+#include "Shaders\Shader.h"
 
 #include "memory"
 
@@ -26,5 +27,7 @@ private:
     Camera camera;
     Timer timer;
 
+    unsigned int VBO, VAO;
 
+    std::unique_ptr<ShaderSuite> shaderProgram{};
 };

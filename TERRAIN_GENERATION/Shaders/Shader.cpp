@@ -1,15 +1,38 @@
 #include "Shader.h"
 
-#include <type_traits>
+void checkCompileErrors(unsigned int shader, std::string type)
+{
+    int success;
+    char infoLog[1024];
+    if (type != "PROGRAM")
+    {
+        glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+        if (!success)
+        {
+            glGetShaderInfoLog(shader, 1024, NULL, infoLog);
+            std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+        }
+    }
+    else
+    {
+        glGetProgramiv(shader, GL_LINK_STATUS, &success);
+        if (!success)
+        {
+            glGetProgramInfoLog(shader, 1024, NULL, infoLog);
+            std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+        }
+    }
+}
 
 
 Shader::Shader(const std::string& sourceCode, ShaderType type)
     :
-    ID(static_cast<GLenum>(type))
+    ID(glCreateShader(static_cast<GLenum>(type)))
 {
     const char* shaderCode = sourceCode.c_str();
     glShaderSource(ID, 1, &shaderCode, NULL);
     glCompileShader(ID);
+    checkCompileErrors(ID, "-----");
 }
 
 unsigned int Shader::GetID()
@@ -21,21 +44,28 @@ ShaderSuite::ShaderSuite(std::initializer_list<std::pair<std::string_view, Shade
     :
     ID(glCreateProgram())
 {
+    std::vector<Shader> shaders;
+    shaders.reserve(suite.size());
     for (const auto& p : suite)
     {
-        Shader shader = readShaderFromFile(p.first, p.second);
-        mShaders.emplace_back(shader);
-        glAttachShader(ID, shader.GetID());
+        shaders.emplace_back(readShaderFromFile(p.first, p.second));
+        glAttachShader(ID, shaders.back().GetID());
+
     }
 
-    glLinkProgram(ID);
+   
 
-    for (auto& shader : mShaders)
+    glLinkProgram(ID);
+    checkCompileErrors(ID, "PROGRAM");
+        
+    for (auto& shader : shaders)
     {
+
         glDetachShader(ID, shader.GetID());
         glDeleteShader(shader.GetID());
     }
 }
+
 
 
 
@@ -131,3 +161,10 @@ void ShaderSuite::setMat4(const std::string& uName, const glm::mat4& mat) const
 {
     glUniformMatrix4fv(glGetUniformLocation(ID, uName.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
+
+
+unsigned int ShaderSuite::GetID()
+{
+    return ID;
+}
+

@@ -45,6 +45,7 @@ public:
     Shader readShaderFromFile(std::string_view filePath, Shader::ShaderType);
 
     void use();
+
     void setBool(const std::string& uName, bool value) const;
     void setInt(const std::string& uName, int value) const;
     void setFloat(const std::string& uName, float value) const;
@@ -58,7 +59,10 @@ public:
     void setMat3(const std::string& uName, const glm::mat3& mat) const;
     void setMat4(const std::string& uName, const glm::mat4& mat) const;
 
+    unsigned int GetID();
+
 private:
     unsigned int ID;
-    std::vector<Shader> mShaders;
 };
+
+
