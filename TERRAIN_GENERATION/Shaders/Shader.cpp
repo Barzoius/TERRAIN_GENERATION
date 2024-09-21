@@ -32,7 +32,7 @@ Shader::Shader(const std::string& sourceCode, ShaderType type)
     const char* shaderCode = sourceCode.c_str();
     glShaderSource(ID, 1, &shaderCode, NULL);
     glCompileShader(ID);
-    checkCompileErrors(ID, "-----");
+    checkCompileErrors(ID, "---");
 }
 
 unsigned int Shader::GetID()
