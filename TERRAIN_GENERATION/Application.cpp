@@ -1,59 +1,81 @@
+//#include "imgui\imgui.h"
+//#include "imgui\imgui_impl_glfw.h"
+//#include "imgui\imgui_impl_opengl3.h"
+
 #include "Application.h"
 #include "iostream"
+
+#include "VertexBuffer.h"
+#include "VertexArray.h"
+#include "ElementBuffer.h"
+
+
 
 
 Application::Application()
 {
-    mWindow = std::make_unique<Window>(800, 600 , "TERRAIN_GENERATION");
+    mWindow = std::make_unique<Window>(800, 600, "TOY_GFX");
+
+
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "GLAD FAILED";
     }
 
-    shaderProgram = std::make_unique<ShaderSuite>(std::initializer_list<std::pair<std::string_view, Shader::ShaderType>>{
-        {"Shaders/VertShader.glsl", Shader::ShaderType::VERTEX},
-        { "Shaders/FragShader.glsl", Shader::ShaderType::FRAGMENT },
-    });
+    //light = new LightSource(1.0f);
+    //light->SetPosition(glm::vec3(1.5f, 3.0f, 0.0f));
 
-    std::cout<<shaderProgram -> GetID();
+    plane = new TestPlane(1.0f);
+    plane->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 
-    float vertices[] = {
-        // positions         // colors
-         0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 1.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
-         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // top 
-    };
 
-    
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // Position attribute (location = 0)
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    // Color attribute (location = 1)
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
+    glEnable(GL_DEPTH_TEST);
 }
 
 Application::~Application()
 {
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
+
+}
+
+void Application::OnEvent()
+{
+    if (glfwGetKey(mWindow->GetWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    {
+        glfwSetWindowShouldClose(mWindow->GetWindow(), true);
+    }
+
+    if (glfwGetKey(mWindow->GetWindow(), GLFW_KEY_P) == GLFW_PRESS)
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+
+    if (glfwGetKey(mWindow->GetWindow(), GLFW_KEY_E) == GLFW_PRESS)
+    {
+        //glfwSetWindowShouldClose(mWindow->GetWindow(), true);
+        std::cout << "E";
+    }
 
 }
 
 
 void Application::Run()
 {
+    //IMGUI_CHECKVERSION();
+    //ImGui::CreateContext();
+    //ImGuiIO& io = ImGui::GetIO(); (void)io;
+    //ImGui::StyleColorsDark();
+    //ImGui_ImplGlfw_InitForOpenGL(mWindow->GetWindow(), true);
+    //ImGui_ImplOpenGL3_Init("#version 330");
+
+
+
+    glm::mat4 cameraView;
+    glm::mat4 projection = glm::mat4(1.0f);
+
+    int Divs = 8;
+
+    float squareSize = 2.0f / Divs;
 
     while (!glfwWindowShouldClose(mWindow->GetWindow()))
     {
@@ -61,17 +83,38 @@ void Application::Run()
         mWindow->ProcessInput();
 
 
-
         glClearColor(0.91f, 0.64f, 0.09f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        shaderProgram -> use();
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        //ImGui_ImplOpenGL3_NewFrame();
+        //ImGui_ImplGlfw_NewFrame();
+        //ImGui::NewFrame();
 
-       /* float fov = 45.0f;
-        glm::mat4 projection = glm::perspective(glm::radians(fov), 
-            (float)mWindow -> GetHeight() / (float)mWindow->GetWidth(), 0.1f, 100.0f);*/
+        cameraView = mWindow->mCamera.GetMatrix();
+        cameraView = glm::translate(cameraView, glm::vec3(0.0f, 0.0f, 1.0f));
+
+        projection = glm::perspective(glm::radians(45.0f), (float)mWindow->GetWidth() / (float)mWindow->GetHeight(), 0.1f, 100.0f);
+
+
+
+
+
+
+
+        /*light->ControlWND();
+        light->Draw(cameraView, projection);
+        light->GetShader()->setVec3("Color", 1.0f, 1.0f, 1.0f);*/
+
+        plane->ControlWND();
+        plane->Draw(cameraView, projection);
+        plane->GetShader()->setVec3("Color", 1.0f, 1.0f, 1.0f);
+
+
+
+
+
+        //ImGui::Render();
+        //ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         mWindow->OnUpdate();
     }

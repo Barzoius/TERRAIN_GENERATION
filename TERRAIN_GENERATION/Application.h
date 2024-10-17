@@ -5,6 +5,13 @@
 
 #include "memory"
 
+
+#include "LightSource.h"
+#include "TestPlane.h"
+
+
+
+
 class Application
 {
 public:
@@ -18,7 +25,9 @@ public:
 
     inline Window* GetWindow() { return mWindow.get(); }
 
-    
+ 
+    //LightSource* light;
+    TestPlane* plane;
 
 private:
     std::unique_ptr<Window> mWindow;
@@ -27,7 +36,10 @@ private:
     Camera camera;
     Timer timer;
 
-    unsigned int VBO, VAO;
+    // Projection proj;
+
+
+
 
     std::unique_ptr<ShaderSuite> shaderProgram{};
 };

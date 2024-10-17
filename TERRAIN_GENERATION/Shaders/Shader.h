@@ -11,6 +11,8 @@
 
 #include <vector>
 #include <memory>
+#include <utility>
+#include <unordered_map>
 
 
 
@@ -46,6 +48,7 @@ public:
 
     void use();
 
+
     void setBool(const std::string& uName, bool value) const;
     void setInt(const std::string& uName, int value) const;
     void setFloat(const std::string& uName, float value) const;
@@ -62,6 +65,9 @@ public:
     unsigned int GetID();
 
 private:
+    //std::vector<std::pair<std::string_view, Shader::ShaderType>> mShaders;
+
+    std::unordered_map<Shader::ShaderType, bool> mShaderLookUp;
     unsigned int ID;
 };
 

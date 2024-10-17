@@ -10,23 +10,29 @@ public:
 
     IndexedTrigList() = default;
 
-    IndexedTrigList(std::vector<VERTEX> vertices, std::vector<unsigned short> indices)
+    IndexedTrigList(std::vector<VERTEX> vertices, std::vector<unsigned int> indices)
         :
         vertices( std::move(vertices) ),
         indices( std::move(indices) )
     {
-        assert(vertices.size() > 2);
-        assert(indices.size() % 3 == 0);
+        //assert(vertices.size() > 2);
+        //assert(indices.size() % 3 == 0);
     }
 
-    void Treansform(glm::mat4 matrix)
+    void Treansform(glm::vec3 scaleFactors)
     {
+
+        glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), scaleFactors);
+
         for (auto& vertex : vertices)
         {
-            const glm::vec3 pos = vertex.pos;
+            auto& pos = vertex.pos;
+
+            pos = scaleMatrix * glm::vec4(pos, 1.0f);
         }
     }
-private:
+
+public:
     std::vector<VERTEX> vertices;
-    std::vector<unsigned short> indices;
+    std::vector<unsigned int> indices;
 };

@@ -44,16 +44,29 @@ ShaderSuite::ShaderSuite(std::initializer_list<std::pair<std::string_view, Shade
     :
     ID(glCreateProgram())
 {
+    assert((suite.size() < 7) && "ERROR: suite contains more than 6 shaders.");
+
     std::vector<Shader> shaders;
     shaders.reserve(suite.size());
     for (const auto& p : suite)
     {
-        shaders.emplace_back(readShaderFromFile(p.first, p.second));
-        glAttachShader(ID, shaders.back().GetID());
+        const auto exits = mShaderLookUp.find(p.second);
+
+        if (exits == mShaderLookUp.end())
+        {   
+            mShaderLookUp.insert({ p.second, true });
+            shaders.emplace_back(readShaderFromFile(p.first, p.second));
+            glAttachShader(ID, shaders.back().GetID());
+        }
+        else
+        {
+            std::cerr << "WARNINING: this shader program already has this type of shader\n It was not binded"<<std::endl;
+        }
+
+       
 
     }
 
-   
 
     glLinkProgram(ID);
     checkCompileErrors(ID, "PROGRAM");
