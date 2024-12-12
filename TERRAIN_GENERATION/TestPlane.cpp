@@ -40,6 +40,13 @@ void TestPlane::SetPosition(glm::vec3 pos) noexcept
 
 }
 
+void TestPlane::SetRotation(float roll, float pitch, float yaw) noexcept
+{
+    roll = roll;
+    pitch = pitch;
+    yaw = yaw;
+}
+
 glm::mat4x4 TestPlane::GetTransformMatrix() const noexcept
 {
     glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), yaw, glm::vec3(0.0f, 0.0f, 1.0f)) *    // Yaw (Z-axis)

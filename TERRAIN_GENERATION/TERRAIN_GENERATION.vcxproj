@@ -147,8 +147,10 @@
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Shaders\Shader.h" />
     <ClInclude Include="Sphere.h" />
+    <ClInclude Include="SSBuffer.h" />
+    <ClInclude Include="Terrain.h" />
     <ClInclude Include="TestPlane.h" />
-    <ClInclude Include="Timer.h" />
+    <ClInclude Include="Texture.hpp" />
     <ClInclude Include="VertexArray.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="Window.h" />
@@ -161,17 +163,22 @@
     <ClCompile Include="LightSource.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Shaders\Shader.cpp" />
+    <ClCompile Include="SSBuffer.cpp" />
     <ClCompile Include="TestPlane.cpp" />
-    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="VertexArray.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\Frag.glsl" />
     <None Include="Shaders\FragShader.glsl" />
-    <None Include="Shaders\Vert.glsl" />
+    <None Include="Shaders\HeightMap.glsl" />
+    <None Include="Shaders\NormalMap.glsl" />
     <None Include="Shaders\VertShader.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\HeightMaps\HMAP_2.png" />
+    <Image Include="Shaders\HeightMap.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

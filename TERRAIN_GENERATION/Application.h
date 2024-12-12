@@ -1,6 +1,6 @@
 #include "Window.h"
 #include "Camera.h"
-#include "Timer.h"
+
 #include "Shaders\Shader.h"
 
 #include "memory"
@@ -9,7 +9,7 @@
 #include "LightSource.h"
 #include "TestPlane.h"
 
-
+#include "Texture.hpp"
 
 
 class Application
@@ -34,12 +34,6 @@ private:
     bool mIsRunning = true;
 
     Camera camera;
-    Timer timer;
-
-    // Projection proj;
-
-
-
 
     std::unique_ptr<ShaderSuite> shaderProgram{};
 };
