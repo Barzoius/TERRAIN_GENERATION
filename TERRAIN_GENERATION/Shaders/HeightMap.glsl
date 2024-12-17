@@ -1,6 +1,6 @@
 #version 450 core
 
-layout (local_size_x = 15, local_size_y = 16) in;
+layout (local_size_x = 16, local_size_y = 16) in;
 
 layout (rgba32f, binding = 0) uniform image2D hMap;
 
@@ -40,7 +40,7 @@ void main() {
     // Normalize height to [0.0, 1.0]
     height = (height + 1.0) * 0.5;
 
-   // imageStore(hMap, texel_coord, vec4(height, height, height, 1.0));
+     imageStore(hMap, texel_coord, vec4(height, height, height, 1.0));
 
-    imageStore(hMap, texel_coord, vec4(1.0, 0.0, 0.0, 1.0)); 
+    //imageStore(hMap, texel_coord, vec4(1.0, 0.0, 0.0, 1.0)); 
 }

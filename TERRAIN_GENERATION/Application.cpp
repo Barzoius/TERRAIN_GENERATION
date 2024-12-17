@@ -12,9 +12,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
-
-
-
+#include <algorithm>
 
 Application::Application()
 {
@@ -64,50 +62,10 @@ void Application::OnEvent()
 }
 
 
-void SaveHeightMap(GLuint texture, int width, int height, const std::string& filename)
-{
-    glBindTexture(GL_TEXTURE_2D, texture);
 
-    // Allocate buffer to hold texture data
-    std::vector<float> pixels(width * height * 4); // Assuming GL_RGBA32F
-
-
-
-    // Read the texture data
-    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, pixels.data());
-
-    for (int i = 0; i < 10; ++i) {
-        std::cout << "Pixel " << i << ": R=" << pixels[i * 4 + 0]
-            << ", G=" << pixels[i * 4 + 1]
-            << ", B=" << pixels[i * 4 + 2]
-            << ", A=" << pixels[i * 4 + 3] << std::endl;
-    }
-
-    // Convert to 8-bit format for saving
-    std::vector<unsigned char> image(width * height * 4);
-    for (int i = 0; i < width * height * 4; ++i)
-    {
-        // Scale the float range (0.0f to 1.0f) to 8-bit (0 to 255)
-        image[i] = static_cast<unsigned char>(glm::clamp(pixels[i] * 255.0f, 0.0f, 255.0f));
-    }
-
-    // Save the image as BMP
-    if (!stbi_write_bmp(filename.c_str(), width, height, 4, image.data())) {
-        std::cerr << "Failed to write BMP file!" << std::endl;
-    }
-
-    // Unbind the texture
-    glBindTexture(GL_TEXTURE_2D, 0);
-}
 
 void Application::Run()
 {
-    //IMGUI_CHECKVERSION();
-    //ImGui::CreateContext();
-    //ImGuiIO& io = ImGui::GetIO(); (void)io;
-    //ImGui::StyleColorsDark();
-    //ImGui_ImplGlfw_InitForOpenGL(mWindow->GetWindow(), true);
-    //ImGui_ImplOpenGL3_Init("#version 330");
 
 
     ShaderSuite compute = ShaderSuite(std::initializer_list<std::pair<std::string_view, Shader::ShaderType>>{
@@ -117,32 +75,38 @@ void Application::Run()
     int width = mWindow->GetWidth();
     int height = mWindow->GetHeight();
 
-    GLuint heightmapTexture;
-    glGenTextures(1, &heightmapTexture);
-    glBindTexture(GL_TEXTURE_2D, heightmapTexture);
+
+    unsigned int texture;
+    glGenTextures(1, &texture);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, width, 0, GL_RGBA,
+        GL_FLOAT, NULL);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glGenerateMipmap(GL_TEXTURE_2D);
 
 
 
+    glBindImageTexture(0, texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
-    glBindImageTexture(0, heightmapTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
 
 
-    GLuint texture;
 
 
     glm::mat4 cameraView;
     glm::mat4 projection = glm::mat4(1.0f);
 
     int Divs = 8;
-
     float squareSize = 2.0f / Divs;
-
-
-    Texture tex(0, 0);
-    tex.Bind();
-    tex.SetParams();
-    tex.loadFromFile("Resources/HeightMaps/HMAP_2.png");
 
 
 
@@ -155,21 +119,43 @@ void Application::Run()
         glClearColor(0.91f, 0.64f, 0.09f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        //ImGui_ImplOpenGL3_NewFrame();
-        //ImGui_ImplGlfw_NewFrame();
-        //ImGui::NewFrame();
-
-
-
 
         compute.use();
          
         compute.setInt("iterations", 32);
-        compute.setVec2("resolution", width, height);
+        compute.setVec2("resolution", width, width);
         glDispatchCompute(width, height, 1);
-        //glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT)
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
 
+
+
+        if (glfwGetKey(mWindow->GetWindow(), GLFW_KEY_C) == GLFW_PRESS)
+        {
+            std::vector<float> textureData(width * width * 4);
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, textureData.data());
+            glBindTexture(GL_TEXTURE_2D, 0);
+
+            std::cout << "Texture Data (first 10 pixels):\n";
+            for (size_t i = 0; i < 10; ++i)
+            {
+                std::cout << "Pixel " << i << ": ("
+                    << textureData[i * 4 + 0] << ", "
+                    << textureData[i * 4 + 1] << ", "
+                    << textureData[i * 4 + 2] << ", "
+                    << textureData[i * 4 + 3] << ")\n";
+            }
+
+            // Save texture as image
+            std::vector<unsigned char> imageData(width * width * 4);
+            for (size_t i = 0; i < textureData.size(); ++i)
+            {
+                imageData[i] = static_cast<unsigned char>(std::clamp(textureData[i] * 255.0f, 0.0f, 255.0f));
+            }
+
+            stbi_write_png("output_texture.png", width, width, 4, imageData.data(), width * 4);
+            std::cout << "Saved texture to output_texture.png\n";
+        }
 
 
         cameraView = mWindow->mCamera.GetMatrix();
@@ -178,26 +164,12 @@ void Application::Run()
         projection = glm::perspective(glm::radians(45.0f), (float)mWindow->GetWidth() / (float)mWindow->GetHeight(), 0.1f, 100.0f);
 
 
-
-
-        /*light->ControlWND();
-        light->Draw(cameraView, projection);
-        light->GetShader()->setVec3("Color", 1.0f, 1.0f, 1.0f);*/
-
         plane->ControlWND();
         plane->Draw(cameraView, projection);
         plane->GetShader()->setVec3("Color", 1.0f, 1.0f, 1.0f);
 
-
-
-        //ImGui::Render();
-        //ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
         mWindow->OnUpdate();
     }
-
-   // SaveHeightMap(heightmapTexture, width, height, "Shaders/HeightMap.bmp");
-
 
 }
 
