@@ -12,6 +12,9 @@
 #include "Texture.hpp"
 
 
+#include "Terrain.h"
+
+
 class Application
 {
 public:
@@ -28,6 +31,8 @@ public:
  
     //LightSource* light;
     TestPlane* plane;
+
+    Terrain* terrain;
 
 private:
     std::unique_ptr<Window> mWindow;

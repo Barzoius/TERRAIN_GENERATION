@@ -28,10 +28,13 @@ Application::Application()
     //light = new LightSource(1.0f);
     //light->SetPosition(glm::vec3(1.5f, 3.0f, 0.0f));
 
-    plane = new TestPlane(1.0f);
-    plane->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-    plane->SetRotation(35.0f);
+    //plane = new TestPlane(1.0f);
+    //plane->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+    //plane->SetRotation(35.0f);
 
+    terrain = new Terrain(20.0f);
+    terrain->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+    terrain->SetRotation(90.0f);
 
     glEnable(GL_DEPTH_TEST);
 }
@@ -63,78 +66,80 @@ void Application::OnEvent()
 
 
 
-
 void Application::Run()
 {
-
-
+    // Load the compute shader
     ShaderSuite compute = ShaderSuite(std::initializer_list<std::pair<std::string_view, Shader::ShaderType>>{
         {"Shaders/HeightMap.glsl", Shader::ShaderType::COMPUTE},
     });
 
+    // Get window dimensions
     int width = mWindow->GetWidth();
     int height = mWindow->GetHeight();
 
-
+    width = width * 2;
+    height = height * 2;
+    // Generate and configure the texture
     unsigned int texture;
     glGenTextures(1, &texture);
 
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0); // Activate texture unit 0
     glBindTexture(GL_TEXTURE_2D, texture);
 
+    // Allocate storage for the texture
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, width, 0, GL_RGBA,
-        GL_FLOAT, NULL);
-
+    // Set texture parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glGenerateMipmap(GL_TEXTURE_2D);
 
-
-
+    // Bind the texture to an image unit for the compute shader
     glBindImageTexture(0, texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-
 
 
     glm::mat4 cameraView;
     glm::mat4 projection = glm::mat4(1.0f);
 
-    int Divs = 8;
-    float squareSize = 2.0f / Divs;
+    GLint maxTessLevel;
+    glGetIntegerv(GL_MAX_TESS_GEN_LEVEL, &maxTessLevel);
+    std::cout << "Max available tess level: " << maxTessLevel << std::endl;
 
-
-
+ 
     while (!glfwWindowShouldClose(mWindow->GetWindow()))
     {
-
+       
         mWindow->ProcessInput();
 
-
+      
         glClearColor(0.91f, 0.64f, 0.09f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
         compute.use();
-         
-        compute.setInt("iterations", 32);
-        compute.setVec2("resolution", width, width);
-        glDispatchCompute(width, height, 1);
+        compute.setInt("iterations", 64);
+        compute.setVec2("resolution", width, height);
+
+        // Bind the texture for compute shader writes
+        glBindImageTexture(0, texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+        glDispatchCompute((width + 15) / 16, (height + 15) / 16, 1); // Ensure proper group sizes
+
+        // Ensure all writes to the texture are completed before use
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
 
+        // Bind the texture for the tessellation shader
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        terrain->GetShader()->use();
+        terrain->GetShader()->setInt("heightMap", 0);
 
-
+     
         if (glfwGetKey(mWindow->GetWindow(), GLFW_KEY_C) == GLFW_PRESS)
         {
-            std::vector<float> textureData(width * width * 4);
+  
+            std::vector<float> textureData(width * height * 4);
             glBindTexture(GL_TEXTURE_2D, texture);
             glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, textureData.data());
-            glBindTexture(GL_TEXTURE_2D, 0);
 
             std::cout << "Texture Data (first 10 pixels):\n";
             for (size_t i = 0; i < 10; ++i)
@@ -146,14 +151,14 @@ void Application::Run()
                     << textureData[i * 4 + 3] << ")\n";
             }
 
-            // Save texture as image
-            std::vector<unsigned char> imageData(width * width * 4);
+     
+            std::vector<unsigned char> imageData(width * height * 4);
             for (size_t i = 0; i < textureData.size(); ++i)
             {
                 imageData[i] = static_cast<unsigned char>(std::clamp(textureData[i] * 255.0f, 0.0f, 255.0f));
             }
 
-            stbi_write_png("output_texture.png", width, width, 4, imageData.data(), width * 4);
+            stbi_write_png("output_texture.png", width, height, 4, imageData.data(), width * 4);
             std::cout << "Saved texture to output_texture.png\n";
         }
 
@@ -161,17 +166,16 @@ void Application::Run()
         cameraView = mWindow->mCamera.GetMatrix();
         cameraView = glm::translate(cameraView, glm::vec3(0.0f, 0.0f, 1.0f));
 
+
         projection = glm::perspective(glm::radians(45.0f), (float)mWindow->GetWidth() / (float)mWindow->GetHeight(), 0.1f, 100.0f);
 
-
-        plane->ControlWND();
-        plane->Draw(cameraView, projection);
-        plane->GetShader()->setVec3("Color", 1.0f, 1.0f, 1.0f);
+        terrain->ControlWND();
+        terrain->Draw(cameraView, projection);
 
         mWindow->OnUpdate();
     }
-
 }
+
 
 bool Application::OnWindowClose()
 {

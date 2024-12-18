@@ -149,6 +149,7 @@
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="SSBuffer.h" />
     <ClInclude Include="Terrain.h" />
+    <ClInclude Include="TerrainPlane.h" />
     <ClInclude Include="TestPlane.h" />
     <ClInclude Include="Texture.hpp" />
     <ClInclude Include="VertexArray.h" />
@@ -164,6 +165,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Shaders\Shader.cpp" />
     <ClCompile Include="SSBuffer.cpp" />
+    <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TestPlane.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="VertexArray.cpp" />
@@ -174,6 +176,10 @@
     <None Include="Shaders\FragShader.glsl" />
     <None Include="Shaders\HeightMap.glsl" />
     <None Include="Shaders\NormalMap.glsl" />
+    <None Include="Shaders\TCS.glsl" />
+    <None Include="Shaders\TerrainFrag.glsl" />
+    <None Include="Shaders\TerrainVert.glsl" />
+    <None Include="Shaders\TES.glsl" />
     <None Include="Shaders\VertShader.glsl" />
   </ItemGroup>
   <ItemGroup>

@@ -42,5 +42,4 @@ void main() {
 
      imageStore(hMap, texel_coord, vec4(height, height, height, 1.0));
 
-    //imageStore(hMap, texel_coord, vec4(1.0, 0.0, 0.0, 1.0)); 
 }

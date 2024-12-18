@@ -87,6 +87,9 @@
     <ClInclude Include="Texture.hpp">
       <Filter>Header Files\Bindables</Filter>
     </ClInclude>
+    <ClInclude Include="TerrainPlane.h">
+      <Filter>Header Files\Primitives</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp">
@@ -128,12 +131,19 @@
     <ClCompile Include="Texture.cpp">
       <Filter>Source Files\Bindables</Filter>
     </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>Source Files\Drawables</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\VertShader.glsl" />
     <None Include="Shaders\FragShader.glsl" />
     <None Include="Shaders\HeightMap.glsl" />
     <None Include="Shaders\NormalMap.glsl" />
+    <None Include="Shaders\TES.glsl" />
+    <None Include="Shaders\TCS.glsl" />
+    <None Include="Shaders\TerrainVert.glsl" />
+    <None Include="Shaders\TerrainFrag.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Shaders\HeightMap.bmp">
