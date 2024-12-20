@@ -4,22 +4,47 @@
 
 
 #include <string>
-
+#include <optional>
 
 class Texture : public Bindable
 {
 public:
-    Texture(int width, int height);
+
+    enum class ETARGET : GLenum
+    {
+        TEX2D = GL_TEXTURE_2D,
+        TEX2DARRAY = GL_TEXTURE_2D_ARRAY,
+    };
+
+    struct Specs
+    {
+        //ETARGET TARGET{ ETARGET::TEX2D };
+        GLenum TARGET{ GL_TEXTURE_2D };
+        GLint WRAP_S{ GL_CLAMP_TO_EDGE };
+        GLint WRAP_T{ GL_CLAMP_TO_EDGE };
+        GLint MIN{ GL_LINEAR };
+        GLint MAG{ GL_LINEAR };
+        GLint INTERNAL{ GL_RGB };
+        GLenum FORMAT{ GL_RGB };
+        std::optional<GLsizei> layers{};
+    };
+
+    Texture(int width, int height, Specs sepcs);
     Texture(const Texture&) = delete;
     ~Texture();
 
     void Bind() override;
     void Unbind() override;
 
-    void BindIMG(GLuint unit, GLenum access);
+    void AccessBind(GLenum access);
 
     void loadCubeMap();
     void loadFromFile(std::string_view);
+
+    void LoadTexture2D();
+    void LoadTexture2DFromFile(std::string_view);
+
+    void SetActive();
 
     GLuint GetID();
     int GetWidth();
@@ -27,10 +52,19 @@ public:
 
     void SetParams();
 
+    
+
 private:
     int mTexWidth;
     int mTexHeight;
 
     GLuint texID;
+    GLuint texUnit;
+    static uint32_t nextUnit;
+
+
+    Specs mSpecs{};
+
+    bool isArray = false;
 
 };

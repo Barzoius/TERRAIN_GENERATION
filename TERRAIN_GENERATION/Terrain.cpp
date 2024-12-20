@@ -7,7 +7,7 @@
 #include <string>
 
 
-//#include "imgui/imgui.h"
+#include "imgui/imgui.h"
 
 Terrain::Terrain(float size)
 {
@@ -33,6 +33,33 @@ Terrain::Terrain(float size)
         { "Shaders/TES.glsl", Shader::ShaderType::TESELLATION_EVALUATION}
     }));
 
+
+
+}
+
+ShaderSuite* Terrain::GetComputeHeight()
+{
+    return computeHeightMap.get();
+}
+
+Texture* Terrain::GetHeightMap()
+{
+    return heightMap.get();
+}
+
+void Terrain::SetHeightMap(std::unique_ptr<ShaderSuite> compute, int rez)
+{
+    computeHeightMap = std::move(compute);
+
+    const Texture::Specs specs{ .TARGET = GL_TEXTURE_2D,
+                                .WRAP_S = GL_CLAMP_TO_EDGE,
+                                .WRAP_T = GL_CLAMP_TO_EDGE,
+                                .MIN = GL_LINEAR,
+                                .MAG = GL_LINEAR,
+                                .INTERNAL = GL_RGBA32F,
+                                .FORMAT = GL_RGBA};
+
+    heightMap = std::make_unique<Texture>(rez, rez, specs);
 }
 
 void Terrain::SetPosition(glm::vec3 pos) noexcept
@@ -65,17 +92,17 @@ glm::mat4x4 Terrain::GetTransformMatrix() const noexcept
 
 void Terrain::ControlWND() noexcept
 {
-    //if (ImGui::Begin("Plane"))
-    //{
-    //    ImGui::Text("Position");
-    //    ImGui::SliderFloat("X", &mPos.x, -80.0f, 80.0f, "%.1f");
-    //    ImGui::SliderFloat("Y", &mPos.y, -80.0f, 80.0f, "%.1f");
-    //    ImGui::SliderFloat("Z", &mPos.z, -80.0f, 80.0f, "%.1f");
-    //    ImGui::Text("Orientation");
-    //    ImGui::SliderAngle("Roll", &roll, -180.0f, 180.0f);
-    //    ImGui::SliderAngle("Pitch", &pitch, -180.0f, 180.0f);
-    //    ImGui::SliderAngle("Yaw", &yaw, -180.0f, 180.0f);
+    if (ImGui::Begin("TERRAIN"))
+    {
+        ImGui::Text("Position");
+        ImGui::SliderFloat("X", &mPos.x, -80.0f, 80.0f, "%.1f");
+        ImGui::SliderFloat("Y", &mPos.y, -80.0f, 80.0f, "%.1f");
+        ImGui::SliderFloat("Z", &mPos.z, -80.0f, 80.0f, "%.1f");
+        ImGui::Text("Orientation");
+        ImGui::SliderAngle("Roll", &roll, -180.0f, 180.0f);
+        ImGui::SliderAngle("Pitch", &pitch, -180.0f, 180.0f);
+        ImGui::SliderAngle("Yaw", &yaw, -180.0f, 180.0f);
 
-    //}
-    //ImGui::End();
+    }
+    ImGui::End();
 }

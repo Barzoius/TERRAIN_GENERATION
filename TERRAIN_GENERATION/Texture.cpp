@@ -4,13 +4,19 @@
 
 #include <iostream>
 
+uint32_t Texture::nextUnit = 0;
 
-Texture::Texture(int width, int height)
+Texture::Texture(int width, int height, Specs specs)
     :
-    mTexHeight(height), mTexWidth(width)
+    mTexHeight(height), mTexWidth(width), mSpecs(specs), texUnit(nextUnit++)
 {
     glGenTextures(1, &texID);
 
+}
+
+void Texture::SetActive()
+{
+    glActiveTexture(GL_TEXTURE0 + texUnit);
 }
 
 
@@ -26,22 +32,24 @@ void Texture::Unbind()
 
 void Texture::Bind()
 {
-    glBindTexture(GL_TEXTURE_2D, texID);
+    glBindTexture(mSpecs.TARGET, texID);
 }
 
-void Texture::BindIMG(GLuint unit, GLenum access)
+void Texture::AccessBind(GLenum access)
 {
-    glBindImageTexture(unit, texID, 0, GL_FALSE, 0, access, GL_RGBA32F);
+    glBindImageTexture(texUnit, texID, 0, GL_FALSE, 0, access, mSpecs.INTERNAL);
 }
 
 void Texture::SetParams()
 {
     //glCreateTextures(GL_TEXTURE_2D, 1, &texID);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(mSpecs.TARGET, GL_TEXTURE_WRAP_S, mSpecs.WRAP_S);
+    glTexParameteri(mSpecs.TARGET, GL_TEXTURE_WRAP_T, mSpecs.WRAP_T);
+    glTexParameteri(mSpecs.TARGET, GL_TEXTURE_MIN_FILTER, mSpecs.MIN);
+    glTexParameteri(mSpecs.TARGET, GL_TEXTURE_MAG_FILTER, mSpecs.MAG);
 }
+
+
 
 
 void Texture::loadFromFile(std::string_view filePath)
@@ -65,6 +73,16 @@ void Texture::loadFromFile(std::string_view filePath)
     stbi_image_free(data);
 
 }
+
+void Texture::LoadTexture2D()
+{
+    glTexImage2D(mSpecs.TARGET, 0, 
+                 mSpecs.INTERNAL, 
+                 mTexWidth, mTexHeight, 0, 
+                 mSpecs.FORMAT, GL_FLOAT, NULL);
+}
+
+
 
 
 GLuint Texture::GetID()

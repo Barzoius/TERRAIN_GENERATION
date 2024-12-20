@@ -9,8 +9,6 @@
 #include "LightSource.h"
 #include "TestPlane.h"
 
-#include "Texture.hpp"
-
 
 #include "Terrain.h"
 
