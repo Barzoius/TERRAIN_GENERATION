@@ -16,7 +16,10 @@ layout (binding = 0) uniform sampler2DArray ALBEDO;
 void main()
 {
 	float h = (Height + 16)/64.0f;
-	vec4 albedoColor = texture(ALBEDO, vec3(gl_FragCoord.xy, 0));
+   
+     vec2 texCoords = gl_FragCoord.xy / vec2(64, 64);
+
+    vec4 albedoColor = texture(ALBEDO, vec3(texCoords, 2));
 
     FragColor = vec4(albedoColor.rgba);
 }

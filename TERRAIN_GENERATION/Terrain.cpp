@@ -75,13 +75,13 @@ void Terrain::SetMaterialData(int rez)
                                 .MIPMAP = true,
                                 .layers = 3};
 
-    albedos = std::make_unique<Texture>(rez, rez, specs);
+    albedos = std::make_unique<Texture>(2048, 2048, specs);
 
     albedos->SetUNIT(0);
 
     std::vector<std::string_view> albedoPATHS{
        "Resources/Materials/rocky-dirt/RD_ALBEDO.png",
-       "Resources/Materials/jagged-rockface1/JA_ALBEDO.png",
+       "Resources/Materials/jagged-rockface1/CCA.png",
        "Resources/Materials/rock-snow/RS_ALBEDO.png",
     };
     
