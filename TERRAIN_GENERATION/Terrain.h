@@ -20,6 +20,7 @@ public:
     void ControlWND() noexcept;
 
     void SetHeightMap(std::unique_ptr<ShaderSuite>, int);
+    void SetMaterialData(int);
 
     ShaderSuite* GetComputeHeight();
     Texture* GetHeightMap();
@@ -38,6 +39,9 @@ private:
     std::unique_ptr<Texture> heightMap;
     std::unique_ptr<Texture> normalMap;
 
-    
+    std::unique_ptr<Texture> albedos;
+    std::unique_ptr<Texture> normals;
+    std::unique_ptr<Texture> roughness;
+
 
 };

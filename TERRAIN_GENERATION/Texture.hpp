@@ -5,6 +5,7 @@
 
 #include <string>
 #include <optional>
+#include <vector>
 
 class Texture : public Bindable
 {
@@ -26,6 +27,7 @@ public:
         GLint MAG{ GL_LINEAR };
         GLint INTERNAL{ GL_RGB };
         GLenum FORMAT{ GL_RGB };
+        bool MIPMAP{false};
         std::optional<GLsizei> layers{};
     };
 
@@ -43,6 +45,10 @@ public:
 
     void LoadTexture2D();
     void LoadTexture2DFromFile(std::string_view);
+
+    void LoadTexture2DArray(const std::vector<std::string_view>&);
+
+    void SetUNIT(int unit);
 
     void SetActive();
 

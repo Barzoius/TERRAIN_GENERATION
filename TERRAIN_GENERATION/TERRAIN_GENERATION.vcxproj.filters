@@ -200,5 +200,14 @@
     <Image Include="Resources\HeightMaps\HMAP_2.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Resources\Materials\rock-snow\RS_ALBEDO.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Materials\rocky-dirt\RD_ALBEDO.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Materials\jagged-rockface1\JA_ALBEDO.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

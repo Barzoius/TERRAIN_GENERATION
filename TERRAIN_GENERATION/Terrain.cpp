@@ -57,10 +57,45 @@ void Terrain::SetHeightMap(std::unique_ptr<ShaderSuite> compute, int rez)
                                 .MIN = GL_LINEAR,
                                 .MAG = GL_LINEAR,
                                 .INTERNAL = GL_RGBA32F,
-                                .FORMAT = GL_RGBA};
+                                .FORMAT = GL_RGBA,
+                                .MIPMAP = false};
 
     heightMap = std::make_unique<Texture>(rez, rez, specs);
 }
+
+void Terrain::SetMaterialData(int rez)
+{
+    const Texture::Specs specs{ .TARGET = GL_TEXTURE_2D_ARRAY,
+                                .WRAP_S = GL_REPEAT,
+                                .WRAP_T = GL_REPEAT,
+                                .MIN = GL_LINEAR_MIPMAP_LINEAR,
+                                .MAG = GL_LINEAR,
+                                .INTERNAL = GL_RGBA32F,
+                                .FORMAT = GL_RGBA,
+                                .MIPMAP = true,
+                                .layers = 3};
+
+    albedos = std::make_unique<Texture>(rez, rez, specs);
+
+    albedos->SetUNIT(0);
+
+    std::vector<std::string_view> albedoPATHS{
+       "Resources/Materials/rocky-dirt/RD_ALBEDO.png",
+       "Resources/Materials/jagged-rockface1/JA_ALBEDO.png",
+       "Resources/Materials/rock-snow/RS_ALBEDO.png",
+    };
+    
+    albedos->SetActive();
+    albedos->Bind();
+    albedos->LoadTexture2DArray(albedoPATHS);
+    albedos->SetParams();
+    //albedos->Unbind();
+
+}
+
+
+
+
 
 void Terrain::SetPosition(glm::vec3 pos) noexcept
 {

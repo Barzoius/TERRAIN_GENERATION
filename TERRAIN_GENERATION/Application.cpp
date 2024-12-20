@@ -89,9 +89,6 @@ void Application::Run()
     width = width * 2;
     height = height * 2;
 
-    //unsigned int texture;
-    //glGenTextures(1, &texture);
-
     terrain->SetHeightMap(std::make_unique<ShaderSuite>(std::initializer_list<std::pair<std::string_view, Shader::ShaderType>>{
         {"Shaders/HeightMap.glsl", Shader::ShaderType::COMPUTE},}), width);
 
@@ -100,21 +97,9 @@ void Application::Run()
     terrain->GetHeightMap()->LoadTexture2D();
     terrain->GetHeightMap()->SetParams();
     terrain->GetHeightMap()->AccessBind(GL_READ_WRITE);
+    terrain->GetHeightMap()->Unbind();
 
-    //glActiveTexture(GL_TEXTURE0); // Activate texture unit 0
-    //glBindTexture(GL_TEXTURE_2D, texture);
-
-    //// Allocate storage for the texture
-    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, width, 0, GL_RGBA, GL_FLOAT, NULL);
-
-    //// Set texture parameters
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-    //// Bind the texture to an image unit for the compute shader
-    //glBindImageTexture(0, texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+    terrain->SetMaterialData(width);
 
 
     glm::mat4 cameraView;
@@ -142,27 +127,18 @@ void Application::Run()
         terrain->GetComputeHeight()->use();
         terrain->GetComputeHeight()->setInt("iterations", 32);
         terrain->GetComputeHeight()->setVec2("resolution", width, width);
-        //compute.use();
-        //compute.setInt("iterations", 128);
-        //compute.setVec2("resolution", width, width);
 
-        // Bind the texture for compute shader writes
-        //glBindImageTexture(0, texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
         terrain->GetHeightMap()->AccessBind(GL_READ_WRITE);
-        glDispatchCompute((width + 15) / 16, (width + 15) / 16, 1); // Ensure proper group sizes
-
-        // Ensure all writes to the texture are completed before use
+        glDispatchCompute((width + 15) / 16, (width + 15) / 16, 1); 
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
 
-        // Bind the texture for the tessellation shader
-        //glActiveTexture(GL_TEXTURE0);
-        //glBindTexture(GL_TEXTURE_2D, texture);
 
         terrain->GetHeightMap()->SetActive();
         terrain->GetHeightMap()->Bind();
 
         terrain->GetShader()->use();
         terrain->GetShader()->setInt("heightMap", 0);
+        terrain->GetShader()->setInt("ALBEDO", 0);
 
      
         /*if (glfwGetKey(mWindow->GetWindow(), GLFW_KEY_C) == GLFW_PRESS)
