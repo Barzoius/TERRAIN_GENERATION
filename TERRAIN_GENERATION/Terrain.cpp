@@ -81,7 +81,7 @@ void Terrain::SetMaterialData(int rez)
 
     std::vector<std::string_view> albedoPATHS{
        "Resources/Materials/rocky-dirt/RD_ALBEDO.png",
-       "Resources/Materials/jagged-rockface1/CCA.png",
+       "Resources/Materials/jagged-rockface1/JA_ALBEDO.png",
        "Resources/Materials/rock-snow/RS_ALBEDO.png",
     };
     
@@ -137,6 +137,9 @@ void Terrain::ControlWND() noexcept
         ImGui::SliderAngle("Roll", &roll, -180.0f, 180.0f);
         ImGui::SliderAngle("Pitch", &pitch, -180.0f, 180.0f);
         ImGui::SliderAngle("Yaw", &yaw, -180.0f, 180.0f);
+
+        ImGui::Text("HeightMap");
+        ImGui::Image((void*)(intptr_t)this->GetHeightMap()->GetID() , ImVec2(150, 150));
 
     }
     ImGui::End();

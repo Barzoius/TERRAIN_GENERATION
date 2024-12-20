@@ -41,6 +41,8 @@ public:
 
     void SetPosition(float x, float y, float z);
 
+    glm::vec3 GetPosition();
+
     const float zoom = 45.0f;
 
 private:

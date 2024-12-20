@@ -18,6 +18,10 @@ glm::mat4 Camera::GetMatrix()
         glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
+glm::vec3 Camera::GetPosition()
+{
+    return camPosition;
+}
 
 glm::mat4 Camera::GetViewMatrix()
 {

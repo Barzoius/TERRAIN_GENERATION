@@ -116,7 +116,9 @@ void Application::Run()
         mWindow->ProcessInput();
 
       
-        glClearColor(0.91f, 0.64f, 0.09f, 1.0f);
+        //glClearColor(0.91f, 0.64f, 0.09f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
@@ -138,6 +140,7 @@ void Application::Run()
 
         terrain->GetShader()->use();
         terrain->GetShader()->setInt("heightMap", 0);
+        terrain->GetShader()->setVec3("camOrigin", mWindow->mCamera.GetPosition());
         terrain->GetShader()->setInt("ALBEDO", 0);
 
      

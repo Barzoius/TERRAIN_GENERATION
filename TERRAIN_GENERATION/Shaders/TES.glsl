@@ -12,6 +12,8 @@ in vec2 TextureCoord[];
 
 out float Height;
 
+out vec3 Position;
+
 void main()
 {
 
@@ -46,6 +48,8 @@ void main()
     vec4 p = (p1 - p0) * v + p0;
 
      p += normal * Height;
+
+     Position = p.xyz;
 
      gl_Position = projection * view * model * p;
 
