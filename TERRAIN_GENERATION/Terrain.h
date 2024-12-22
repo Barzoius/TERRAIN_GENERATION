@@ -20,10 +20,16 @@ public:
     void ControlWND() noexcept;
 
     void SetHeightMap(std::unique_ptr<ShaderSuite>, int);
+    void SetNormalMap(std::unique_ptr<ShaderSuite>, int);
+
     void SetMaterialData(int);
 
+
     ShaderSuite* GetComputeHeight();
+    ShaderSuite* GetComputeNormal();
+
     Texture* GetHeightMap();
+    Texture* GetNormalMap();
 
 private:
     glm::vec3 mPos = glm::vec3(0.0f, 0.0f, 0.0f);

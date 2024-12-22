@@ -90,6 +90,9 @@ void Application::Run()
     terrain->SetHeightMap(std::make_unique<ShaderSuite>(std::initializer_list<std::pair<std::string_view, Shader::ShaderType>>{
         {"Shaders/HeightMap.glsl", Shader::ShaderType::COMPUTE},}), width);
 
+    terrain->SetNormalMap(std::make_unique<ShaderSuite>(std::initializer_list<std::pair<std::string_view, Shader::ShaderType>>{
+        {"Shaders/NormalMap.glsl", Shader::ShaderType::COMPUTE}, }), width);
+
     terrain->GetHeightMap()->SetActive();
     terrain->GetHeightMap()->Bind();
     terrain->GetHeightMap()->LoadTexture2D();
@@ -133,18 +136,24 @@ void Application::Run()
         terrain->GetComputeHeight()->setFloat("scale", terrain->noise_scale);
         terrain->GetComputeHeight()->setFloat("exponent", terrain->exponent);
 
-
-
-
-
-        terrain->GetHeightMap()->AccessBind(GL_READ_WRITE);
         glDispatchCompute((width) / 16, (width) / 16, 1); 
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
 
-
+        terrain->GetHeightMap()->AccessBind(GL_READ_WRITE);
         terrain->GetHeightMap()->SetActive();
         terrain->GetHeightMap()->Bind();
-        terrain->GetHeightMap()->SaveTexture();
+
+
+        terrain->GetComputeNormal()->use();
+        terrain->GetNormalMap()->AccessBind(GL_READ_WRITE);
+
+        glDispatchCompute((width) / 16, (width) / 16, 1);
+        glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
+
+        if (glfwGetKey(mWindow->GetWindow(), GLFW_KEY_C) == GLFW_PRESS)
+        {
+            terrain->GetHeightMap()->SaveTexture();
+        }
 
 
         terrain->GetShader()->use();
@@ -153,35 +162,6 @@ void Application::Run()
         terrain->GetShader()->setInt("ALBEDO", 0);
 
      
-        /*if (glfwGetKey(mWindow->GetWindow(), GLFW_KEY_C) == GLFW_PRESS)
-        {
-  
-            std::vector<float> textureData(width * width * 4);
-            glBindTexture(GL_TEXTURE_2D, texture);
-            glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, textureData.data());
-
-            std::cout << "Texture Data (first 10 pixels):\n";
-            for (size_t i = 0; i < 10; ++i)
-            {
-                std::cout << "Pixel " << i << ": ("
-                    << textureData[i * 4 + 0] << ", "
-                    << textureData[i * 4 + 1] << ", "
-                    << textureData[i * 4 + 2] << ", "
-                    << textureData[i * 4 + 3] << ")\n";
-            }
-
-     
-            std::vector<unsigned char> imageData(width * width * 4);
-            for (size_t i = 0; i < textureData.size(); ++i)
-            {
-                imageData[i] = static_cast<unsigned char>(std::clamp(textureData[i] * 255.0f, 0.0f, 255.0f));
-            }
-
-            stbi_write_png("output_texture.png", width, width, 4, imageData.data(), width * 4);
-            std::cout << "Saved texture to output_texture.png\n";
-        }*/
-
-
         cameraView = mWindow->mCamera.GetMatrix();
         cameraView = glm::translate(cameraView, glm::vec3(0.0f, 0.0f, 1.0f));
 

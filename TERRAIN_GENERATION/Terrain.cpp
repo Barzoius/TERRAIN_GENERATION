@@ -42,9 +42,19 @@ ShaderSuite* Terrain::GetComputeHeight()
     return computeHeightMap.get();
 }
 
+ShaderSuite* Terrain::GetComputeNormal()
+{
+    return computeNormalMap.get();
+}
+
 Texture* Terrain::GetHeightMap()
 {
     return heightMap.get();
+}
+
+Texture* Terrain::GetNormalMap()
+{
+    return normalMap.get();
 }
 
 void Terrain::SetHeightMap(std::unique_ptr<ShaderSuite> compute, int rez)
@@ -61,6 +71,22 @@ void Terrain::SetHeightMap(std::unique_ptr<ShaderSuite> compute, int rez)
                                 .MIPMAP = false};
 
     heightMap = std::make_unique<Texture>(rez, rez, specs);
+}
+
+void Terrain::SetNormalMap(std::unique_ptr<ShaderSuite> compute, int rez)
+{
+    computeNormalMap = std::move(compute);
+
+    const Texture::Specs specs{ .TARGET = GL_TEXTURE_2D,
+                                .WRAP_S = GL_CLAMP_TO_EDGE,
+                                .WRAP_T = GL_CLAMP_TO_EDGE,
+                                .MIN = GL_LINEAR,
+                                .MAG = GL_LINEAR,
+                                .INTERNAL = GL_RGBA32F,
+                                .FORMAT = GL_RGBA,
+                                .MIPMAP = false };
+
+    normalMap = std::make_unique<Texture>(rez, rez, specs);
 }
 
 void Terrain::SetMaterialData(int rez)
