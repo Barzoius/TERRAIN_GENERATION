@@ -9,8 +9,6 @@
 #include "VertexArray.h"
 #include "ElementBuffer.h"
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
 
 #include <algorithm>
 
@@ -86,7 +84,7 @@ void Application::Run()
     int width = mWindow->GetWidth();
     int height = mWindow->GetHeight();
 
-    width = width * 2;
+    width = width;
     height = height * 2;
 
     terrain->SetHeightMap(std::make_unique<ShaderSuite>(std::initializer_list<std::pair<std::string_view, Shader::ShaderType>>{
@@ -129,14 +127,25 @@ void Application::Run()
         terrain->GetComputeHeight()->use();
         terrain->GetComputeHeight()->setInt("iterations", 32);
         terrain->GetComputeHeight()->setVec2("resolution", width, width);
+        terrain->GetComputeHeight()->setInt("octaves", terrain->octaves);
+        terrain->GetComputeHeight()->setFloat("lacunarity", terrain->lacunarity);
+        terrain->GetComputeHeight()->setFloat("persistence", terrain->persistance);
+        terrain->GetComputeHeight()->setFloat("scale", terrain->noise_scale);
+        terrain->GetComputeHeight()->setFloat("exponent", terrain->exponent);
+
+
+
+
 
         terrain->GetHeightMap()->AccessBind(GL_READ_WRITE);
-        glDispatchCompute((width + 15) / 16, (width + 15) / 16, 1); 
+        glDispatchCompute((width) / 16, (width) / 16, 1); 
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
 
 
         terrain->GetHeightMap()->SetActive();
         terrain->GetHeightMap()->Bind();
+        terrain->GetHeightMap()->SaveTexture();
+
 
         terrain->GetShader()->use();
         terrain->GetShader()->setInt("heightMap", 0);

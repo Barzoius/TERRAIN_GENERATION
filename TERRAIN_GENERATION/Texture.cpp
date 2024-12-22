@@ -2,8 +2,17 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+
+
 #include <iostream>
 #include <vector>
+
+
+#include <algorithm>s
+
 
 uint32_t Texture::nextUnit = 0;
 
@@ -50,6 +59,22 @@ void Texture::SetParams()
     glTexParameteri(mSpecs.TARGET, GL_TEXTURE_MAG_FILTER, mSpecs.MAG);
 }
 
+
+void Texture::SaveTexture()
+{
+    std::vector<float> textureData(mTexWidth * mTexWidth * 4);
+
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, textureData.data());
+
+    std::vector<unsigned char> imageData(mTexWidth * mTexWidth * 4);
+    for (size_t i = 0; i < textureData.size(); ++i)
+    {
+        imageData[i] = static_cast<unsigned char>(std::clamp(textureData[i] * 255.0f, 0.0f, 255.0f));
+    }
+
+    stbi_write_png("output_texture.png", mTexWidth, mTexWidth, 4, imageData.data(), mTexWidth * 4);
+    std::cout << "Saved texture to output_texture.png\n";
+}
 
 
 

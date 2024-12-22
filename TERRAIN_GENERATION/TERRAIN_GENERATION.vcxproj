@@ -204,7 +204,6 @@
     <Image Include="Resources\Materials\jagged-rockface1\JA_ALBEDO.png" />
     <Image Include="Resources\Materials\rock-snow\RS_ALBEDO.png" />
     <Image Include="Resources\Materials\rocky-dirt\RD_ALBEDO.png" />
-    <Image Include="Shaders\HeightMap.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

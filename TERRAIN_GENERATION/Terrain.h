@@ -43,5 +43,11 @@ private:
     std::unique_ptr<Texture> normals;
     std::unique_ptr<Texture> roughness;
 
+public:
+    int octaves;
+    float lacunarity;
+    float persistance;
+    float noise_scale;
+    float exponent;
 
 };

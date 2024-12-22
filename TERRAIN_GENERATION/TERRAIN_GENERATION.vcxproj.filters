@@ -194,9 +194,6 @@
     <None Include="Shaders\TerrainFrag.glsl" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Shaders\HeightMap.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="Resources\HeightMaps\HMAP_2.png">
       <Filter>Resource Files</Filter>
     </Image>

@@ -52,6 +52,8 @@ public:
 
     void SetActive();
 
+    void SaveTexture();
+
     GLuint GetID();
     int GetWidth();
     int GetHeight();

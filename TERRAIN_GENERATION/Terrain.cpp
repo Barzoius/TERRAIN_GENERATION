@@ -138,8 +138,20 @@ void Terrain::ControlWND() noexcept
         ImGui::SliderAngle("Pitch", &pitch, -180.0f, 180.0f);
         ImGui::SliderAngle("Yaw", &yaw, -180.0f, 180.0f);
 
+
         ImGui::Text("HeightMap");
-        ImGui::Image((void*)(intptr_t)this->GetHeightMap()->GetID() , ImVec2(150, 150));
+        ImGui::Image((void*)(intptr_t)this->GetHeightMap()->GetID(), ImVec2(150, 150));
+        
+        ImGui::Text("FBM");
+        ImGui::SliderInt("OCTAVES", &octaves, 0, 16);
+        ImGui::SliderFloat("Lacunarity", &lacunarity, 0.0f, 1.0f);
+        ImGui::SliderFloat("Persistance", &persistance, 0.0f, 1.0f);
+        ImGui::SliderFloat("Scale", &noise_scale, 0.0f, 20.0f);
+        ImGui::SliderFloat("Exponent", &exponent, 0.0f, 5.0f);
+
+       
+
+
 
     }
     ImGui::End();
