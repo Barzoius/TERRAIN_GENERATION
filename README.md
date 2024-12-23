@@ -7,7 +7,19 @@ different methods to simulate natural terrain features.
 
 ## Features
 
-....
+- Procedural HeightMap generation with:
+    - Fault Formation
+    - Fractal Brownian Noise
+
+- Procedural NormalMap generation with:
+    - Sobel Operator
+    - Scharr Operator
+
+- Triplanar texture mapping
+
+- LOD with tessellation shaders based on roughness
+
+
 
 ## HeightMap Generation
 

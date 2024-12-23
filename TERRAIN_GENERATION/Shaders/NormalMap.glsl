@@ -13,14 +13,14 @@ uniform int operatorType;
 
 void sobel()
 {
-    uvec2 workGroup_pixel = gl_LocalInvocation.xy + uvec2(1, 1);
+    uvec2 workGroup_pixel = gl_LocalInvocationID.xy + uvec2(1, 1);
 
 }
 
 
 void scharr()
 {
-    uvec2 workGroup_pixel = gl_LocalInvocation.xy + uvec2(1, 1);
+    uvec2 workGroup_pixel = gl_LocalInvocationID.xy + uvec2(1, 1);
 
 }
 
@@ -29,7 +29,7 @@ void main()
 {
     
     ivec2 hMap_pixel = ivec2(gl_GlobalInvocationID.xy);
-    uvec2 workGroup_pixel = gl_LocalInvocationID.xy+ uvec2(1, 1);
+    uvec2 workGroup_pixel = gl_LocalInvocationID.xy + uvec2(1, 1);
 
     haloed_WorkGroup[workGroup_pixel.x][workGroup_pixel.y]
             = imageLoad(hMap, ivec2(hMap_pixel.x, hMap_pixel.y )).r;
