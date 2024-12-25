@@ -14,6 +14,8 @@ out float Height;
 
 out vec3 Position;
 
+out vec2 TexCoords;
+
 void main()
 {
 
@@ -29,7 +31,7 @@ void main()
     vec2 t1 = (t11 - t10) * u + t10;
     vec2 texCoord = (t1 - t0) * v + t0;
 
-    Height = texture(heightMap, texCoord).y * 64.0 - 16.0;
+    Height = texture(heightMap, texCoord).r * 64.0 - 16.0;
 
 
     vec4 p00 = gl_in[0].gl_Position;
@@ -50,6 +52,8 @@ void main()
      p += normal * Height;
 
      Position = p.xyz;
+
+     TexCoords = texCoord;
 
      gl_Position = projection * view * model * p;
 

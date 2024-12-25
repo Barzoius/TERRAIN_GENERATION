@@ -16,6 +16,8 @@ uniform vec3 camOrigin;
 
 in vec3 Position;
 
+in vec2 TexCoords;
+
 void main()
 {
 	float h = (Height + 16)/64.0f;
@@ -37,11 +39,11 @@ void main()
 
     float spec = specIntensity * specLight;
 
-    FragColor = vec4(vec3(0.5, h, 0.7), 1.0)* (diffuse + ambient + spec);
+    //FragColor = vec4(vec3(0.5, h, 0.7), 1.0)* (diffuse + ambient + spec);
 
-//	vec2 texCoords = gl_FragCoord.xy / vec2(64, 64);
+	//vec2 texCoords = gl_FragCoord.xy / vec2(2048, 2048);
 
-//    vec4 albedoColor = texture(ALBEDO, vec3(texCoords, 2));
+    vec4 albedoColor = texture(ALBEDO, vec3(TexCoords, 1));
 
-//    FragColor = vec4(albedoColor.rgba);
+    FragColor = vec4(albedoColor.rgba)* (diffuse + ambient + spec);
 }
