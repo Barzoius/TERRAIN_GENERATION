@@ -177,8 +177,11 @@ void Terrain::ControlWND() noexcept
 
        
 
-
+        ImGui::Text("NormalMap");
+        ImGui::Image((void*)(intptr_t)this->GetNormalMap()->GetID(), ImVec2(150, 150));
 
     }
     ImGui::End();
+
+    //std::cout << GetHeightMap()->GetUnit() << " " << GetNormalMap()->GetUnit()<<" ";
 }

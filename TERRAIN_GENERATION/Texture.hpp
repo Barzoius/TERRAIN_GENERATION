@@ -57,6 +57,7 @@ public:
     GLuint GetID();
     int GetWidth();
     int GetHeight();
+    GLuint GetUnit();
 
     void SetParams();
 

@@ -100,6 +100,16 @@ void Application::Run()
     terrain->GetHeightMap()->AccessBind(GL_READ_WRITE);
     terrain->GetHeightMap()->Unbind();
 
+
+    terrain->GetNormalMap()->SetActive();
+    terrain->GetNormalMap()->Bind();
+    terrain->GetNormalMap()->LoadTexture2D();
+    terrain->GetNormalMap()->SetParams();
+    terrain->GetNormalMap()->AccessBind(GL_READ_WRITE);
+    terrain->GetNormalMap()->Unbind();
+
+
+
     terrain->SetMaterialData(width);
 
 
@@ -127,6 +137,8 @@ void Application::Run()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        terrain->GetHeightMap()->Bind();
+
         terrain->GetComputeHeight()->use();
         terrain->GetComputeHeight()->setInt("iterations", 32);
         terrain->GetComputeHeight()->setVec2("resolution", width, width);
@@ -136,23 +148,25 @@ void Application::Run()
         terrain->GetComputeHeight()->setFloat("scale", terrain->noise_scale);
         terrain->GetComputeHeight()->setFloat("exponent", terrain->exponent);
 
+
         glDispatchCompute((width) / 16, (width) / 16, 1); 
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
 
-        terrain->GetHeightMap()->AccessBind(GL_READ_WRITE);
-        terrain->GetHeightMap()->SetActive();
-        terrain->GetHeightMap()->Bind();
-
 
         terrain->GetComputeNormal()->use();
-        terrain->GetNormalMap()->AccessBind(GL_READ_WRITE);
+        terrain->GetComputeNormal()->setInt("operator", 2);
+    
 
         glDispatchCompute((width) / 16, (width) / 16, 1);
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
 
+
+
+
         if (glfwGetKey(mWindow->GetWindow(), GLFW_KEY_C) == GLFW_PRESS)
         {
             terrain->GetHeightMap()->SaveTexture();
+            //terrain->GetNormalMap()->SaveTexture();
         }
 
 

@@ -43,7 +43,7 @@ void main()
 
 	//vec2 texCoords = gl_FragCoord.xy / vec2(2048, 2048);
 
-    vec4 albedoColor = texture(ALBEDO, vec3(TexCoords, 1));
+    vec4 albedoColor = texture(ALBEDO, vec3(Position.xz, 2));
 
     FragColor = vec4(albedoColor.rgba)* (diffuse + ambient + spec);
 }

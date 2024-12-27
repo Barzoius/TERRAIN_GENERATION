@@ -11,7 +11,7 @@
 #include <vector>
 
 
-#include <algorithm>s
+#include <algorithm>
 
 
 uint32_t Texture::nextUnit = 0;
@@ -161,6 +161,12 @@ GLuint Texture::GetID()
 {
     return texID;
 }
+
+GLuint Texture::GetUnit()
+{
+    return texUnit;
+}
+
 
 
 int Texture::GetWidth()

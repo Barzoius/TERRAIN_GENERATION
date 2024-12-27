@@ -16,6 +16,7 @@ out vec3 Position;
 
 out vec2 TexCoords;
 
+
 void main()
 {
 
@@ -52,7 +53,7 @@ void main()
      p += normal * Height;
 
      Position = p.xyz;
-
+    
      TexCoords = texCoord;
 
      gl_Position = projection * view * model * p;

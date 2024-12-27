@@ -5,7 +5,6 @@ layout (local_size_x = 16, local_size_y = 16) in;
 layout (rgba32f, binding = 0) uniform image2D hMap;
 
 
-
 uniform vec2 resolution;
 uniform int iterations;
 
@@ -58,7 +57,7 @@ float fbm (in vec2 st) {
     float frequency = 0.;
     //
     // Loop of octaves
-    for (int i = 0; i < octaves; i++) {
+    for (int i = 0; i < 8; i++) {
         value += amplitude * noise(st);
         st *= 2.;
         amplitude *= .5;
@@ -102,11 +101,11 @@ void main() {
     vec2 uv = vec2(gl_GlobalInvocationID.xy) / resolution.xy ;
     float height = 0.0;
 
-    //height += ff(uv);
+    height += ff(uv);
 
-    height += fbm(uv * 3.0);
+    //height += fbm(uv * 3.0);
 
-    //height = (height + 1.0) * 0.5;
+    height = (height + 1.0) * 0.5;
 
 
     imageStore(hMap, texel_coord, vec4(height, height, height, 1.0));
