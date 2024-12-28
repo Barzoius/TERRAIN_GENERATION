@@ -69,7 +69,7 @@ void Application::Run()
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(mWindow->GetWindow(), true);
-    ImGui_ImplOpenGL3_Init("#version 330");
+    ImGui_ImplOpenGL3_Init("#version 450");
 
 
 
@@ -137,8 +137,8 @@ void Application::Run()
         terrain->GetHeightMap()->Bind();
 
         terrain->GetComputeHeight()->use();
-        terrain->GetComputeHeight()->setInt("iterations", 32);
-        terrain->GetComputeHeight()->setVec2("resolution", width, width);
+        terrain->GetComputeHeight()->setInt("iterations", terrain->iterations);
+        terrain->GetComputeHeight()->setVec2("resolution", (float)width, (float)width);
         terrain->GetComputeHeight()->setInt("octaves", terrain->octaves);
         terrain->GetComputeHeight()->setFloat("lacunarity", terrain->lacunarity);
         terrain->GetComputeHeight()->setFloat("persistence", terrain->persistance);

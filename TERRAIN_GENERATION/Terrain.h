@@ -56,4 +56,5 @@ public:
     float noise_scale;
     float exponent;
 
+    int iterations;
 };

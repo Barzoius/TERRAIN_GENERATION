@@ -177,6 +177,6 @@ void main()
     }
     else if(operator == 2)
     {
-        scharr();
+        sobel();
     }
 }

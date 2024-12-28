@@ -45,7 +45,7 @@ void main()
 {
 
     get_tbn();
-   // mat3 TBN = mat3(Tangent, Bitangent, Normal);
+   //mat3 TBN = mat3(Tangent, Bitangent, Normal);
 
 	float h = (Height + 16)/64.0f;
 
@@ -53,7 +53,35 @@ void main()
 
     vec3 normal = Normal;
 
-    normal = normalize(TBN * normal);
+     normal = normalize(TBN * normal);
+    
+
+     float slope = 1.0 - normal.y;
+
+     vec4 albedo0 = texture(ALBEDO, vec3(Position.xz, 0));
+     vec4 albedo1 = texture(ALBEDO, vec3(Position.xz, 1));
+     vec4 albedo2 = texture(ALBEDO, vec3(Position.xz, 2));
+
+     vec4 finalTex = vec4(0.0);
+
+     if(slope < 0.2)
+     {
+        float blendFactor = slope / 0.2;
+        finalTex = mix(albedo2, albedo1, blendFactor);
+     }
+     if((slope < 0.7) && (slope >= 0.2f))
+     {
+        float blendFactor = (slope - 0.2) * (1.0 / (0.7 - 0.2));
+        finalTex = mix(albedo2, albedo1, blendFactor);
+     }
+     if(slope >= 0.7) 
+     {
+        float blendFactor = slope / 0.7;
+        finalTex = mix(albedo0, albedo1, blendFactor);;
+     }
+
+
+   
 
     vec3 lightDir = normalize(lightOrigin - Position);
 
@@ -71,6 +99,6 @@ void main()
 
     vec4 albedoColor = texture(ALBEDO, vec3(Position.xz, 1));
 
-    FragColor = vec4(albedoColor.rgba) * (diffuse + ambient + spec);
+    FragColor = vec4(finalTex.rgba) * (diffuse + ambient + spec);
 
 }

@@ -4,6 +4,9 @@ layout (local_size_x = 16, local_size_y = 16) in;
 
 layout (rgba32f, binding = 0) uniform image2D hMap;
 
+layout (rgba32f, binding = 1) uniform image2D hMapTemp;
+
+
 
 uniform vec2 resolution;
 uniform int iterations;
@@ -21,9 +24,6 @@ vec2 hash(vec2 p) {
     p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
     return fract(sin(p) * 43758.5453) * 2.0 - 1.0;
 }
-
-
-
 
 float random (in vec2 st) {
     return fract(sin(dot(st.xy,
@@ -50,20 +50,29 @@ float noise (in vec2 st) {
             (d - b) * u.x * u.y;
 }
 
-float fbm (in vec2 st) {
+float fbn (in vec2 st) {
     // Initial values
+    st = st * 2.0 - 1.0;
     float value = 0.0;
     float amplitude = .5;
-    float frequency = 0.;
+    float frequency = 1.0;
+    float weight = 0.0;
     //
     // Loop of octaves
     for (int i = 0; i < 8; i++) {
-        value += amplitude * noise(st);
-        st *= 2.;
+        //vec2 c =  frequency * st; 
+                st *= 2.0;
+        value += amplitude * (noise(st));
+
+        weight += amplitude;
+        frequency *= 0.5;
         amplitude *= .5;
     }
-    return value;
+    return value / weight;
 }
+
+
+
 
 
 
@@ -80,7 +89,7 @@ float ff(in vec2 uv)
         float dist = dot(uv - faultPoint, direction);
 
         if (dist > 0.0) {
-            height += 1.0 / float(iterations);
+            height += 1.0 / float(iterations) ;
         } else {
             height -= 1.0 / float(iterations);
         }
@@ -94,18 +103,23 @@ float ff(in vec2 uv)
 void main() {
     ivec2 texel_coord = ivec2(gl_GlobalInvocationID.xy);
 
-    if (texel_coord.x >= resolution.x || texel_coord.y >= resolution.y) {
-        return;
-    }
+    vec2 uv = gl_GlobalInvocationID.xy / resolution ;
 
-    vec2 uv = vec2(gl_GlobalInvocationID.xy) / resolution.xy ;
+
+    if(texel_coord.x > resolution.x || texel_coord.y > resolution.y )
+    {
+        return;
+    }   
+
     float height = 0.0;
 
+    height += fbn(uv);
     //height += ff(uv);
 
-    height += fbm(uv * 3.0);
+  
 
     //height = (height + 1.0) * 0.5;
+
 
 
     imageStore(hMap, texel_coord, vec4(height, height, height, 1.0));

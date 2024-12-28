@@ -175,6 +175,8 @@ void Terrain::ControlWND() noexcept
         ImGui::SliderFloat("Scale", &noise_scale, 0.0f, 20.0f);
         ImGui::SliderFloat("Exponent", &exponent, 0.0f, 5.0f);
 
+        ImGui::Text("FF");
+        ImGui::SliderInt("Iterations", &iterations, 16, 100);
        
 
         ImGui::Text("NormalMap");
