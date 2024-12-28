@@ -5,13 +5,14 @@
 
 #include <string>
 
-//#include "imgui/imgui.h"
+#include "imgui/imgui.h"
 
 LightSource::LightSource(float size)
 {
     struct VERTEX
     {
         glm::vec3 pos;
+        glm::vec2 tex;
     };
 
     auto model = Sphere::Make<VERTEX>();
@@ -40,6 +41,12 @@ void LightSource::SetPosition(glm::vec3 pos) noexcept
 
 }
 
+
+glm::vec3 LightSource::GetPosition() noexcept
+{
+    return mPos;
+}
+
 glm::mat4x4 LightSource::GetTransformMatrix() const noexcept
 {
     glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), yaw, glm::vec3(0.0f, 0.0f, 1.0f)) *    // Yaw (Z-axis)
@@ -55,13 +62,13 @@ glm::mat4x4 LightSource::GetTransformMatrix() const noexcept
 
 void LightSource::ControlWND() noexcept
 {
-    //if (ImGui::Begin("Light"))
-    //{
-    //    ImGui::Text("Position");
-    //    ImGui::SliderFloat("X", &mPos.x, -80.0f, 80.0f, "%.1f");
-    //    ImGui::SliderFloat("Y", &mPos.y, -80.0f, 80.0f, "%.1f");
-    //    ImGui::SliderFloat("Z", &mPos.z, -80.0f, 80.0f, "%.1f");
+    if (ImGui::Begin("Light"))
+    {
+        ImGui::Text("Position");
+        ImGui::SliderFloat("X", &mPos.x, -80.0f, 80.0f, "%.1f");
+        ImGui::SliderFloat("Y", &mPos.y, -80.0f, 80.0f, "%.1f");
+        ImGui::SliderFloat("Z", &mPos.z, -80.0f, 80.0f, "%.1f");
 
-    //}
-    //ImGui::End();
+    }
+    ImGui::End();
 }

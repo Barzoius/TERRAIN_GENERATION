@@ -27,7 +27,7 @@ public:
     inline Window* GetWindow() { return mWindow.get(); }
 
  
-    //LightSource* light;
+    LightSource* light;
     TestPlane* plane;
 
     Terrain* terrain;

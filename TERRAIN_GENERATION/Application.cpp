@@ -23,12 +23,9 @@ Application::Application()
         std::cout << "GLAD FAILED";
     }
 
-    //light = new LightSource(1.0f);
-    //light->SetPosition(glm::vec3(1.5f, 3.0f, 0.0f));
+    light = new LightSource(2.0f);
+    light->SetPosition(glm::vec3(1.5f, 3.0f, 0.0f));
 
-    //plane = new TestPlane(1.0f);
-    //plane->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-    //plane->SetRotation(35.0f);
 
     terrain = new Terrain(20.0f);
     terrain->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -172,7 +169,11 @@ void Application::Run()
 
         terrain->GetShader()->use();
         terrain->GetShader()->setInt("heightMap", 0);
+        terrain->GetShader()->setInt("normalMap", 1);
+
         terrain->GetShader()->setVec3("camOrigin", mWindow->mCamera.GetPosition());
+        terrain->GetShader()->setVec3("lightOrigin", light->GetPosition());
+
         terrain->GetShader()->setInt("ALBEDO", 0);
 
      
@@ -182,8 +183,13 @@ void Application::Run()
 
         projection = glm::perspective(glm::radians(45.0f), (float)mWindow->GetWidth() / (float)mWindow->GetHeight(), 0.1f, 100.0f);
 
+
+        light->ControlWND();
+        light->DrawIndexed(cameraView, projection);
+
         terrain->ControlWND();
         terrain->Draw(cameraView, projection);
+
 
 
         ImGui::Render();

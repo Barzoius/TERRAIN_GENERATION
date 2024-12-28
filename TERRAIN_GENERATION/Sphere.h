@@ -55,6 +55,7 @@ public:
         for (size_t i = 0; i < vertices.size(); i++)
         {
             verts[i].pos = vertices[i];
+            verts[i].tex = glm::vec2(0.0, 0.0);
         }
 
 

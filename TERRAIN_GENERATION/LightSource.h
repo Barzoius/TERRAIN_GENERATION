@@ -12,6 +12,8 @@ public:
 
     void ControlWND() noexcept;
 
+    glm::vec3 GetPosition() noexcept;
+
 private:
     glm::vec3 mPos = glm::vec3(0.0f, 0.0f, 0.0f);
 

@@ -28,15 +28,8 @@ void sobel()
     float BR = haloed_WorkGroup[workGroup_pixel.x + 1][workGroup_pixel.y - 1];
 
 
-    float dx = (-3.0 * TL + 3.0 * 
-                TR - 10.0 * L + 
-                10.0 * R - 3.0 * 
-                BL + 3.0 * BR);
-
-    float dy = (-3.0 * TL - 10.0 * 
-                TM + -3.0 * TR + 
-                3.0 * BL + 10.0 * 
-                BM + 3.0 * BR);
+    float dx = (-1.0 * TL + 1.0 * TR - 2.0 * L + 2.0 * R - 1.0 * BL + 1.0 * BR);
+    float dy = (-1.0 * TL - 2.0 * TM - 1.0 * TR + 1.0 * BL + 2.0 * BM + 1.0 * BR);
 
     vec3 normal = normalize(vec3(dx, dy, 0.1));
 
@@ -65,7 +58,7 @@ void scharr()
     float BR = haloed_WorkGroup[workGroup_pixel.x + 1][workGroup_pixel.y - 1];
 
 
-        float dx = (-3.0 * TL + 3.0 * 
+    float dx = (-3.0 * TL + 3.0 * 
                 TR - 10.0 * L + 
                 10.0 * R - 3.0 * 
                 BL + 3.0 * BR);
@@ -83,6 +76,35 @@ void scharr()
 
 }
 
+
+void prewitt()
+{
+    uvec2 workGroup_pixel = gl_LocalInvocationID.xy + uvec2(1, 1);
+
+
+    float TL = haloed_WorkGroup[workGroup_pixel.x - 1][workGroup_pixel.y + 1];
+    float TM = haloed_WorkGroup[workGroup_pixel.x][workGroup_pixel.y + 1];
+    float TR = haloed_WorkGroup[workGroup_pixel.x + 1][workGroup_pixel.y + 1];
+
+    float L = haloed_WorkGroup[workGroup_pixel.x - 1][workGroup_pixel.y];
+    
+    float R = haloed_WorkGroup[workGroup_pixel.x + 1][workGroup_pixel.y];
+
+    float BL = haloed_WorkGroup[workGroup_pixel.x - 1][workGroup_pixel.y - 1];
+    float BM = haloed_WorkGroup[workGroup_pixel.x][workGroup_pixel.y - 1];
+    float BR = haloed_WorkGroup[workGroup_pixel.x + 1][workGroup_pixel.y - 1];
+
+
+    float dx = (-1.0 * TL + 1.0 * TR - 1.0 * L + 1.0 * R - 1.0 * BL + 1.0 * BR);
+    float dy = (-1.0 * TL - 1.0 * TM - 1.0 * TR + 1.0 * BL + 1.0 * BM + 1.0 * BR);
+
+    vec3 normal = normalize(vec3(dx, dy, 0.1));
+
+    vec3 rgb_normal = (normal + 1.0) / 2.0;
+
+    imageStore(nMap, ivec2(gl_GlobalInvocationID.xy), vec4(rgb_normal, 1.0));
+
+}
 
 void main()
 {

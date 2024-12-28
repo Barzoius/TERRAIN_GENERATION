@@ -3,6 +3,8 @@
 layout(quads, fractional_odd_spacing, ccw) in;
 
 uniform sampler2D heightMap;
+uniform sampler2D normalMap;
+
 
 uniform mat4 model;           
 uniform mat4 view;           
@@ -15,6 +17,12 @@ out float Height;
 out vec3 Position;
 
 out vec2 TexCoords;
+
+out vec3 Normal;
+out vec3 Tangent;
+out vec3 Bitangent;
+
+
 
 
 void main()
@@ -50,11 +58,31 @@ void main()
     vec4 p1 = (p11 - p10) * u + p10;
     vec4 p = (p1 - p0) * v + p0;
 
-     p += normal * Height;
+     p.y = 0.5 * Height; 
+    // p += normal * Height;
 
-     Position = p.xyz;
+    vec4 pos = model * p;
+
+     Position = (pos).xyz;
     
      TexCoords = texCoord;
+
+     vec3 nRGB = texture(normalMap, texCoord).rgb;
+
+     vec3 n = nRGB * 2.0 - 1.0;
+
+
+     vec3 deltaE1 = uVec.xyz;
+     vec3 deltaE2 = vVec.xyz;
+
+     vec2 deltaU = t01 - t00;
+     vec2 deltaV = t10 - t00;
+
+     float f = 1.0 / (deltaU.x * deltaV.y - deltaU.y * deltaV.y);
+
+     Tangent = normalize(f * (deltaV.y * deltaE1 - deltaU.y * deltaE2));
+     Normal = normalize(n);
+     Bitangent = -normalize(cross(Normal, Tangent));
 
      gl_Position = projection * view * model * p;
 

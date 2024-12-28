@@ -20,6 +20,8 @@ public:
 
     void Draw(glm::mat4& viewMatrix, glm::mat4& projMatrix) const noexcept;
 
+    void DrawIndexed(glm::mat4& viewMatrix, glm::mat4& projMatrix) const noexcept;
+
 
     virtual glm::mat4x4 GetTransformMatrix() const noexcept = 0;
 

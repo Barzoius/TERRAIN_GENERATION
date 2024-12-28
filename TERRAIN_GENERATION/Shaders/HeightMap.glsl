@@ -101,11 +101,11 @@ void main() {
     vec2 uv = vec2(gl_GlobalInvocationID.xy) / resolution.xy ;
     float height = 0.0;
 
-    height += ff(uv);
+    //height += ff(uv);
 
-    //height += fbm(uv * 3.0);
+    height += fbm(uv * 3.0);
 
-    height = (height + 1.0) * 0.5;
+    //height = (height + 1.0) * 0.5;
 
 
     imageStore(hMap, texel_coord, vec4(height, height, height, 1.0));

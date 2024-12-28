@@ -29,3 +29,8 @@ different methods to simulate natural terrain features.
 |---|---|---|
 | ![](TERRAIN_GENERATION/Resources/ForReadME/FF16.png)  | ![](TERRAIN_GENERATION/Resources/ForReadME/FF32.png)| ![](TERRAIN_GENERATION/Resources/ForReadME/FF64.png)  |
 ### Fractal Brownian Noise
+
+
+# First Result
+
+<img src="TERRAIN_GENERATION/Resources/ForReadME/First.png" alt="Framework Diagram" style="width:100%;">
