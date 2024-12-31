@@ -26,7 +26,6 @@ in vec3 Normal;
 in vec3 Tangent;
 in vec3 Bitangent;
 
-
 mat3 TBN;
 
 void vTBN()
@@ -42,7 +41,6 @@ void vTBN()
     TBN = mat3(T, B, N);
 }
 
-
 vec4 TRIPLANAR_MAPPPING(int texture)
 {
     vec3 blend = abs(Normal);
@@ -52,9 +50,9 @@ vec4 TRIPLANAR_MAPPPING(int texture)
 
     blend /= vec3(b,b,b);
 
-    vec3 xTex = texture(ALBEDO, vec3(Position.yz, texture)).rgb;
-    vec3 yTex = texture(ALBEDO, vec3(Position.xz, texture)).rgb;
-    vec3 zTex = texture(ALBEDO, vec3(Position.xy, texture)).rgb;
+    vec3 xTex = texture(ALBEDO, vec3(Position.yz * .6, texture)).rgb;
+    vec3 yTex = texture(ALBEDO, vec3(Position.xz * .6, texture)).rgb;
+    vec3 zTex = texture(ALBEDO, vec3(Position.xy * .6, texture)).rgb;
 
     vec4 Tex = vec4(xTex * blend.x + yTex * blend.y + zTex * blend.z, 1.0);
 
