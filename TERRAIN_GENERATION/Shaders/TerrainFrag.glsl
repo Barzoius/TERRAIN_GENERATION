@@ -50,7 +50,7 @@ void main()
 
 	float h = (Height + 16)/64.0f;
 
-    float ambient = 0.1f;
+    float ambient = 0.4f;
 
 
      vec3 normal = Normal;
@@ -65,6 +65,12 @@ void main()
      vec4 albedo2 = texture(ALBEDO, vec3(Position.xz, 2));
 
      vec4 finalTex = vec4(0.0);
+
+       if(slope < 0.2)
+     {
+        float blendFactor = slope / 0.2;
+        finalTex = mix(albedo2, albedo1, blendFactor);
+     }
 
      if((slope < 0.7) && (slope >= 0.2f))
      {
@@ -86,7 +92,7 @@ void main()
   
     float diffuse  = max(dot(normal, lightDir), 0.0f);
 
-    float specLight = 0.50f;
+    float specLight = 0.3f;
     vec3 eyeDir = normalize(camOrigin - Position);
     vec3 halfwayDir = normalize(lightDir + eyeDir);
 

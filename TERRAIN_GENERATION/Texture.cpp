@@ -169,7 +169,7 @@ void Texture::createCubeMap(std::vector<const char*> fileNames)
     glBindTexture(GL_TEXTURE_CUBE_MAP, texID);
     glTexStorage2D(GL_TEXTURE_CUBE_MAP, 1, GL_RGBA8, 2048, 2048);
 
-    stbi_set_flip_vertically_on_load(true);
+    //stbi_set_flip_vertically_on_load(true);
 
     for (int i = 0; i < 6; i++)
     {

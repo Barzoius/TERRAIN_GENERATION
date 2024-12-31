@@ -53,15 +53,15 @@ float noise (in vec2 st) {
 float fbn (in vec2 st) {
     // Initial values
     st = st * 2.0 - 1.0;
+
     float value = 0.0;
     float amplitude = .5;
     float frequency = 1.0;
     float weight = 0.0;
-    //
-    // Loop of octaves
+
+
     for (int i = 0; i < 8; i++) {
-        //vec2 c =  frequency * st; 
-                st *= 2.0;
+        st *= 2.0;
         value += amplitude * (0.5 * noise(st));
 
         weight += amplitude;
@@ -109,12 +109,12 @@ void main() {
 
     float height = 0.0;
 
-    height += fbn(uv);
-    //height += ff(uv);
+    //height += fbn(uv);
+    height += ff(uv);
 
   
 
-    //height = (height + 1.0) * 0.5;
+    height = (height + 1.0) * 0.5;
 
 
 

@@ -83,12 +83,12 @@ void Application::Run()
 
     
     
-    SkyBox->createCubeMap({"Resources/SkyBox/EpicBlueSunset/+Z.png",
-                           "Resources/SkyBox/EpicBlueSunset/-Z.png",
-                           "Resources/SkyBox/EpicBlueSunset/+Y.png",
+    SkyBox->createCubeMap({"Resources/SkyBox/EpicBlueSunset/-X.png",
+                           "Resources/SkyBox/EpicBlueSunset/+X.png",
                            "Resources/SkyBox/EpicBlueSunset/-Y.png",
-                           "Resources/SkyBox/EpicBlueSunset/-X.png",
-                           "Resources/SkyBox/EpicBlueSunset/+X.png"});
+                           "Resources/SkyBox/EpicBlueSunset/+Y.png",
+                           "Resources/SkyBox/EpicBlueSunset/-Z.png",
+                           "Resources/SkyBox/EpicBlueSunset/+Z.png"});
 
 
     int width = mWindow->GetWidth();
