@@ -245,6 +245,9 @@ void Terrain::ControlWND() noexcept
 
         ImGui::Text("HeightMap");
         ImGui::Image((void*)(intptr_t)this->GetHeightMap()->GetID(), ImVec2(150, 150));
+
+
+
         
         ImGui::Text("FBM");
         ImGui::SliderInt("OCTAVES", &octaves, 0, 16);
@@ -259,6 +262,11 @@ void Terrain::ControlWND() noexcept
 
         ImGui::Text("NormalMap");
         ImGui::Image((void*)(intptr_t)this->GetNormalMap()->GetID(), ImVec2(150, 150));
+
+
+        ImGui::Text("Texture Options");
+
+        ImGui::Checkbox("checkbox", &triplanar);
 
     }
     ImGui::End();

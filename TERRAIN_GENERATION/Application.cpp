@@ -189,6 +189,7 @@ void Application::Run()
         terrain->GetComputeHeight()->setFloat("exponent", terrain->exponent);
 
 
+
         glDispatchCompute((width) / 16, (width) / 16, 1); 
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
 
@@ -225,6 +226,8 @@ void Application::Run()
 
          terrain->GetShader()->setInt("ALBEDO", 0);
          terrain->GetShader()->setInt("AO", 3);
+
+         terrain->GetShader()->setBool("triplanar", terrain->triplanar);
 
 
      

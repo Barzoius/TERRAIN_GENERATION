@@ -7,14 +7,16 @@ out vec4 FragColor;
 layout (binding = 0) uniform sampler2DArray ALBEDO;
 
 layout (binding = 3) uniform sampler2DArray AO;
-//layout (binding = 2) uniform sampler2DArray ROUGHNESS;
+//layout (binding = 4) uniform sampler2DArray ROUGHNESS;
 
-//layout (binding = 3) uniform sampler2DArray NORMALS;
-//layout (binding = 4) uniform sampler2DArray HEIGHTS;
+//layout (binding = 5) uniform sampler2DArray NORMALS;
+//layout (binding = 6) uniform sampler2DArray HEIGHTS;
 
 
 uniform vec3 camOrigin;
 uniform vec3 lightOrigin;
+
+uniform bool triplanar;
 
 in vec3 Position;
 
@@ -27,7 +29,7 @@ in vec3 Bitangent;
 
 mat3 TBN;
 
-void get_tbn()
+void vTBN()
 {
     vec3 Q1  = dFdx(Position);
     vec3 Q2  = dFdy(Position);
@@ -41,11 +43,30 @@ void get_tbn()
 }
 
 
+vec4 TRIPLANAR_MAPPPING(int texture)
+{
+    vec3 blend = abs(Normal);
+    blend = normalize(max(blend,  0.00001));
+
+    float b = blend.x + blend.y + blend.z;
+
+    blend /= vec3(b,b,b);
+
+    vec3 xTex = texture(ALBEDO, vec3(Position.yz, texture)).rgb;
+    vec3 yTex = texture(ALBEDO, vec3(Position.xz, texture)).rgb;
+    vec3 zTex = texture(ALBEDO, vec3(Position.xy, texture)).rgb;
+
+    vec4 Tex = vec4(xTex * blend.x + yTex * blend.y + zTex * blend.z, 1.0);
+
+    return Tex;
+}
+
+
 
 void main()
 {
 
-   get_tbn();
+   vTBN();
    //mat3 TBN = mat3(Tangent, Bitangent, Normal);
 
 	float h = (Height + 16)/64.0f;
@@ -58,7 +79,7 @@ void main()
      normal = normalize(TBN * normal);
     
 
-      float slope = 1.0 - normal.y;
+     float slope = 1.0 - normal.y;
 
      vec4 albedo0 = texture(ALBEDO, vec3(Position.xz, 0));
      vec4 albedo1 = texture(ALBEDO, vec3(Position.xz, 1));
@@ -66,7 +87,7 @@ void main()
 
      vec4 finalTex = vec4(0.0);
 
-       if(slope < 0.2)
+     if(slope < 0.2)
      {
         float blendFactor = slope / 0.2;
         finalTex = mix(albedo2, albedo1, blendFactor);
@@ -105,6 +126,19 @@ void main()
 
     vec4 albedoColor = texture(ALBEDO, vec3(Position.xz, 1));
 
-    FragColor = vec4(finalTex.rgba) * (diffuse + ambient + spec);
+    vec4 tri = TRIPLANAR_MAPPPING(1);
+
+    vec4 tt = vec4(0.0);
+
+    if (triplanar == true)
+    {
+        tt = TRIPLANAR_MAPPPING(1);
+    }
+    else
+    {
+        tt = texture(ALBEDO, vec3(Position.xz, 1));
+    }
+
+    FragColor = vec4(tt.rgba) * (diffuse + ambient + spec);
 
 }

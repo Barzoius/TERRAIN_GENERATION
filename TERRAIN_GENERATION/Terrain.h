@@ -60,4 +60,6 @@ public:
     float exponent;
 
     int iterations;
+
+    bool triplanar;
 };

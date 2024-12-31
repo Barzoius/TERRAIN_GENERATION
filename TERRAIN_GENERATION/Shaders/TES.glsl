@@ -24,7 +24,6 @@ out vec3 Bitangent;
 
 
 
-
 void main()
 {
 

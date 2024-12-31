@@ -109,12 +109,12 @@ void main() {
 
     float height = 0.0;
 
-    //height += fbn(uv);
-    height += ff(uv);
+    height += fbn(uv);
+    //height += ff(uv);
 
   
 
-    height = (height + 1.0) * 0.5;
+    //height = (height + 1.0) * 0.5;
 
 
 
