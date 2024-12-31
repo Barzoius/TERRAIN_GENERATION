@@ -46,8 +46,11 @@ private:
     std::unique_ptr<Texture> normalMap;
 
     std::unique_ptr<Texture> albedos;
-    std::unique_ptr<Texture> normals;
+    std::unique_ptr<Texture> aos;
     std::unique_ptr<Texture> roughness;
+    std::unique_ptr<Texture> normals;
+    std::unique_ptr<Texture> heights;
+
 
 public:
     int octaves;

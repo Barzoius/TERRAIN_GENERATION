@@ -32,6 +32,9 @@ public:
 
     Terrain* terrain;
 
+    std::unique_ptr<Texture> SkyBox;
+    std::unique_ptr<ShaderSuite> SkyBoxShader;
+
 private:
     std::unique_ptr<Window> mWindow;
     bool mIsRunning = true;

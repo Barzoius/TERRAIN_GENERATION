@@ -62,7 +62,7 @@ float fbn (in vec2 st) {
     for (int i = 0; i < 8; i++) {
         //vec2 c =  frequency * st; 
                 st *= 2.0;
-        value += amplitude * (noise(st));
+        value += amplitude * (0.5 * noise(st));
 
         weight += amplitude;
         frequency *= 0.5;
@@ -70,10 +70,6 @@ float fbn (in vec2 st) {
     }
     return value / weight;
 }
-
-
-
-
 
 
 float ff(in vec2 uv)

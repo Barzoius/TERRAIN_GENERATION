@@ -192,6 +192,8 @@
     <None Include="Shaders\TCS.glsl" />
     <None Include="Shaders\TerrainVert.glsl" />
     <None Include="Shaders\TerrainFrag.glsl" />
+    <None Include="Shaders\SkyBoxVert.glsl" />
+    <None Include="Shaders\SkyBoxFrag.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\HeightMaps\HMAP_2.png">
@@ -210,6 +212,12 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="output_texture.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Materials\jagged-rockface1\JR_AO.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\SkyBox\EpicBlueSunset\+X.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

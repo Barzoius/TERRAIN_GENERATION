@@ -32,6 +32,7 @@ public:
     };
 
     Texture(int width, int height, Specs sepcs);
+    Texture();
     Texture(const Texture&) = delete;
     ~Texture();
 
@@ -40,7 +41,7 @@ public:
 
     void AccessBind(GLenum access);
 
-    void loadCubeMap();
+    void createCubeMap(std::vector<const char*>);
     void loadFromFile(std::string_view);
 
     void LoadTexture2D();

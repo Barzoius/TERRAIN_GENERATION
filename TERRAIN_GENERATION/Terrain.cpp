@@ -101,6 +101,9 @@ void Terrain::SetMaterialData(int rez)
                                 .MIPMAP = true,
                                 .layers = 3};
 
+
+    ///-----------------------------------ALBEDO-----------------------------------///
+
     albedos = std::make_unique<Texture>(2048, 2048, specs);
 
     albedos->SetUNIT(0);
@@ -116,6 +119,81 @@ void Terrain::SetMaterialData(int rez)
     albedos->LoadTexture2DArray(albedoPATHS);
     albedos->SetParams();
     //albedos->Unbind();
+
+    //std::cout << albedos->GetUnit() << std::endl;
+    ///-------------------------------------AO-------------------------------------///
+
+    aos = std::make_unique<Texture>(2048, 2048, specs);
+
+    aos->SetUNIT(3);
+
+    std::vector<std::string_view> aoPATHS{
+       "Resources/Materials/rocky-dirt/RD_AO.png",
+       "Resources/Materials/jagged-rockface1/JA_NORMAL.png",
+       "Resources/Materials/rock-snow/RS_AO.png",
+    };
+
+    aos->SetActive();
+    aos->Bind();
+    aos->LoadTexture2DArray(aoPATHS);
+    aos->SetParams();
+    //aos->Unbind();
+
+    //std::cout << aos->GetUnit() << std::endl;
+    ///----------------------------------ROUGHNESS----------------------------------///
+
+    /*roughness = std::make_unique<Texture>(2048, 2048, specs);
+
+    roughness->SetUNIT(2);
+
+    std::vector<std::string_view> roughnessPATHS{
+       "Resources/Materials/rocky-dirt/RD_ROUGH.png",
+       "Resources/Materials/jagged-rockface1/JA_ROUGH.png",
+       "Resources/Materials/rock-snow/RS_ROUGHT.png",
+    };
+
+    roughness->SetActive();
+    roughness->Bind();
+    roughness->LoadTexture2DArray(roughnessPATHS);
+    roughness->SetParams();
+    roughness->Unbind();
+
+    ///-----------------------------------NORMAL-----------------------------------///
+
+    normals = std::make_unique<Texture>(2048, 2048, specs);
+
+    normals->SetUNIT(3);
+
+    std::vector<std::string_view> normalPATHS{
+       "Resources/Materials/rocky-dirt/RD_NORMAL.png",
+       "Resources/Materials/jagged-rockface1/JA_NORMAL.png",
+       "Resources/Materials/rock-snow/RS_NORMAL.png",
+    };
+
+    normals->SetActive();
+    normals->Bind();
+    normals->LoadTexture2DArray(normalPATHS);
+    normals->SetParams();
+    normals->Unbind();
+
+
+    ///-----------------------------------HEIGHT-----------------------------------///
+
+    heights = std::make_unique<Texture>(2048, 2048, specs);
+
+    heights->SetUNIT(4);
+
+    std::vector<std::string_view> heightPATHS{
+       "Resources/Materials/rocky-dirt/RD_HEIGHT.png",
+       "Resources/Materials/jagged-rockface1/JA_HEIGHT.png",
+       "Resources/Materials/rock-snow/RS_HEIGHT.png",
+    };
+
+    heights->SetActive();
+    heights->Bind();
+    heights->LoadTexture2DArray(heightPATHS);
+    heights->SetParams();
+    heights->Unbind();*/
 
 }
 
@@ -186,4 +264,6 @@ void Terrain::ControlWND() noexcept
     ImGui::End();
 
     //std::cout << GetHeightMap()->GetUnit() << " " << GetNormalMap()->GetUnit()<<" ";
+
+  
 }

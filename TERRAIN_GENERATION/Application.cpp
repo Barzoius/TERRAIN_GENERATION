@@ -31,7 +31,12 @@ Application::Application()
     terrain->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
     terrain->SetRotation(35.0f, 35.0f, 35.0f);
 
+
+    SkyBox = std::make_unique<Texture>();
+
+
     glEnable(GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
 }
 
 Application::~Application()
@@ -72,10 +77,18 @@ void Application::Run()
     ImGui_ImplOpenGL3_Init("#version 450");
 
 
+    SkyBoxShader = std::make_unique<ShaderSuite>(std::initializer_list<std::pair<std::string_view, Shader::ShaderType>>{
+        {"Shaders/SkyBoxVert.glsl", Shader::ShaderType::VERTEX},
+        { "Shaders/SkyBoxFrag.glsl", Shader::ShaderType::FRAGMENT }});
 
-    //ShaderSuite compute = ShaderSuite(std::initializer_list<std::pair<std::string_view, Shader::ShaderType>>{
-    //    {"Shaders/HeightMap.glsl", Shader::ShaderType::COMPUTE},
-    //});
+    
+    
+    SkyBox->createCubeMap({"Resources/SkyBox/EpicBlueSunset/+Z.png",
+                           "Resources/SkyBox/EpicBlueSunset/-Z.png",
+                           "Resources/SkyBox/EpicBlueSunset/+Y.png",
+                           "Resources/SkyBox/EpicBlueSunset/-Y.png",
+                           "Resources/SkyBox/EpicBlueSunset/-X.png",
+                           "Resources/SkyBox/EpicBlueSunset/+X.png"});
 
 
     int width = mWindow->GetWidth();
@@ -106,7 +119,6 @@ void Application::Run()
     terrain->GetNormalMap()->Unbind();
 
 
-
     terrain->SetMaterialData(width);
 
 
@@ -117,6 +129,15 @@ void Application::Run()
     glGetIntegerv(GL_MAX_TESS_GEN_LEVEL, &maxTessLevel);
     std::cout << "Max available tess level: " << maxTessLevel << std::endl;
 
+
+    GLuint VAO;
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+
+    // Since the vertex data is hardcoded in the shader, no VBO setup is needed here.
+    // Just ensure the VAO is created and bound.
+
+    glBindVertexArray(0);
  
     while (!glfwWindowShouldClose(mWindow->GetWindow()))
     {
@@ -129,10 +150,32 @@ void Application::Run()
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        cameraView = mWindow->mCamera.GetMatrix();
+        cameraView = glm::translate(cameraView, glm::vec3(0.0f, 0.0f, 1.0f));
+
+        GLint error = glGetError();
+        if (error != GL_NO_ERROR) {
+            std::cout << "OpenGL Error: " << error << std::endl;
+        }
+
+        projection = glm::perspective(glm::radians(45.0f), (float)mWindow->GetWidth() / (float)mWindow->GetHeight(), 0.1f, 100.0f);
+
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+
+
+        SkyBoxShader->use();
+        SkyBoxShader->setMat4("view", glm::mat4(glm::mat3(cameraView)));
+        SkyBoxShader->setMat4("projection", projection);
+        glDepthMask(GL_FALSE);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, SkyBox->GetID());
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindVertexArray(0);
+
+        glDepthMask(GL_TRUE);
 
         terrain->GetHeightMap()->Bind();
 
@@ -150,6 +193,10 @@ void Application::Run()
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
 
 
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, terrain->GetHeightMap()->GetID());
+
+
         terrain->GetComputeNormal()->use();
         terrain->GetComputeNormal()->setInt("operator", 2);
     
@@ -158,6 +205,8 @@ void Application::Run()
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
 
 
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, terrain->GetNormalMap()->GetID());
 
 
         if (glfwGetKey(mWindow->GetWindow(), GLFW_KEY_C) == GLFW_PRESS)
@@ -168,20 +217,18 @@ void Application::Run()
 
 
         terrain->GetShader()->use();
-        terrain->GetShader()->setInt("heightMap", 0);
-        terrain->GetShader()->setInt("normalMap", 1);
+        terrain->GetShader()->setInt("heightMap", 1);
+        terrain->GetShader()->setInt("normalMap", 2);
 
         terrain->GetShader()->setVec3("camOrigin", mWindow->mCamera.GetPosition());
         terrain->GetShader()->setVec3("lightOrigin", light->GetPosition());
 
-        terrain->GetShader()->setInt("ALBEDO", 0);
+         terrain->GetShader()->setInt("ALBEDO", 0);
+         terrain->GetShader()->setInt("AO", 3);
+
 
      
-        cameraView = mWindow->mCamera.GetMatrix();
-        cameraView = glm::translate(cameraView, glm::vec3(0.0f, 0.0f, 1.0f));
-
-
-        projection = glm::perspective(glm::radians(45.0f), (float)mWindow->GetWidth() / (float)mWindow->GetHeight(), 0.1f, 100.0f);
+      
 
 
         light->ControlWND();

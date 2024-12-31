@@ -21,8 +21,20 @@ Texture::Texture(int width, int height, Specs specs)
     mTexHeight(height), mTexWidth(width), mSpecs(specs), texUnit(nextUnit++)
 {
     glGenTextures(1, &texID);
+    std::cout << texUnit << "\n";
 
 }
+
+
+Texture::Texture()
+    :
+    mTexHeight(1024), mTexWidth(1024)
+{
+    glGenTextures(1, &texID);
+}
+
+
+
 
 void Texture::SetActive()
 {
@@ -148,6 +160,34 @@ void Texture::LoadTexture2DArray(const std::vector<std::string_view>& filePaths)
 
 
 
+}
+
+
+void Texture::createCubeMap(std::vector<const char*> fileNames)
+{
+
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texID);
+    glTexStorage2D(GL_TEXTURE_CUBE_MAP, 1, GL_RGBA8, 2048, 2048);
+
+    stbi_set_flip_vertically_on_load(true);
+
+    for (int i = 0; i < 6; i++)
+    {
+        int width, height, channels;
+        unsigned char* data = stbi_load(fileNames[i], &width, &height, &channels, STBI_rgb_alpha);
+
+        glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0 , 0, 0, width, height, 
+                        GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+        stbi_image_free(data);
+
+    }
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 }
 
 

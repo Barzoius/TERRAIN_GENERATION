@@ -5,11 +5,12 @@ in float Height;
 out vec4 FragColor;
 
 layout (binding = 0) uniform sampler2DArray ALBEDO;
-//layout (binding = 2) uniform sampler2DArray AO;
-//layout (binding = 3) uniform sampler2DArray ROUGHNESS;
 
-//layout (binding = 4) uniform sampler2DArray NORMALS;
-//layout (binding = 5) uniform sampler2DArray HEIGHTS;
+layout (binding = 3) uniform sampler2DArray AO;
+//layout (binding = 2) uniform sampler2DArray ROUGHNESS;
+
+//layout (binding = 3) uniform sampler2DArray NORMALS;
+//layout (binding = 4) uniform sampler2DArray HEIGHTS;
 
 
 uniform vec3 camOrigin;
@@ -44,19 +45,20 @@ void get_tbn()
 void main()
 {
 
-    get_tbn();
+   get_tbn();
    //mat3 TBN = mat3(Tangent, Bitangent, Normal);
 
 	float h = (Height + 16)/64.0f;
 
     float ambient = 0.1f;
 
-    vec3 normal = Normal;
+
+     vec3 normal = Normal;
 
      normal = normalize(TBN * normal);
     
 
-     float slope = 1.0 - normal.y;
+      float slope = 1.0 - normal.y;
 
      vec4 albedo0 = texture(ALBEDO, vec3(Position.xz, 0));
      vec4 albedo1 = texture(ALBEDO, vec3(Position.xz, 1));
@@ -64,24 +66,20 @@ void main()
 
      vec4 finalTex = vec4(0.0);
 
-     if(slope < 0.2)
-     {
-        float blendFactor = slope / 0.2;
-        finalTex = mix(albedo2, albedo1, blendFactor);
-     }
      if((slope < 0.7) && (slope >= 0.2f))
      {
         float blendFactor = (slope - 0.2) * (1.0 / (0.7 - 0.2));
-        finalTex = mix(albedo2, albedo1, blendFactor);
+        finalTex = mix(albedo0, albedo2, blendFactor);
      }
      if(slope >= 0.7) 
      {
-        float blendFactor = slope / 0.7;
-        finalTex = mix(albedo0, albedo1, blendFactor);;
+        //float blendFactor = slope / 0.7;
+        //finalTex = mix(albedo0, albedo1, blendFactor);;
+        finalTex = albedo2;
      }
 
 
-   
+    
 
     vec3 lightDir = normalize(lightOrigin - Position);
 
@@ -90,9 +88,11 @@ void main()
 
     float specLight = 0.50f;
     vec3 eyeDir = normalize(camOrigin - Position);
+    vec3 halfwayDir = normalize(lightDir + eyeDir);
+
     vec3 reflectedRay = reflect(-lightDir, normal);
 
-    float specIntensity =  pow(max(dot(eyeDir, reflectedRay), 0.0f), 3);
+    float specIntensity =  pow(max(dot(normal, halfwayDir), 0.0f), 3);
 
     float spec = specIntensity * specLight;
 
