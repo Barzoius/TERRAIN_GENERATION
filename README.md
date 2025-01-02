@@ -47,7 +47,7 @@ Abrupt zone for better viewing of the effect:
 
 | TTM Off | TTM On | 
 |---|---|
-| ![](TERRAIN_GENERATION/Resources/ForReadME/triOff.png)  | ![](TERRAIN_GENERATION/Resources/ForReadME/TriOn.png)| 
+| ![](TERRAIN_GENERATION/Resources/ForReadME/TriOff.png)  | ![](TERRAIN_GENERATION/Resources/ForReadME/TriOn.png)| 
 
 
 # First Results
