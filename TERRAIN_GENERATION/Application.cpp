@@ -153,10 +153,10 @@ void Application::Run()
         cameraView = mWindow->mCamera.GetMatrix();
         cameraView = glm::translate(cameraView, glm::vec3(0.0f, 0.0f, 1.0f));
 
-        GLint error = glGetError();
-        if (error != GL_NO_ERROR) {
-            std::cout << "OpenGL Error: " << error << std::endl;
-        }
+        //GLint error = glGetError();
+        //if (error != GL_NO_ERROR) {
+        //    std::cout << "OpenGL Error: " << error << std::endl;
+        //}
 
         projection = glm::perspective(glm::radians(45.0f), (float)mWindow->GetWidth() / (float)mWindow->GetHeight(), 0.1f, 100.0f);
 
@@ -226,6 +226,8 @@ void Application::Run()
 
          terrain->GetShader()->setInt("ALBEDO", 0);
          terrain->GetShader()->setInt("AO", 3);
+         //terrain->GetShader()->setInt("ROUGHNESS", 4);
+         terrain->GetShader()->setInt("NORMALS", 4);
 
          terrain->GetShader()->setBool("triplanar", terrain->triplanar);
 

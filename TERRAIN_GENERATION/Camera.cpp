@@ -51,6 +51,12 @@ void Camera::Update()
     //camY = glm::normalize(glm::cross(camX, camZ));
 }
 
+float Camera::GetSensitivity()
+{
+    return sensitivity;
+}
+
+
 void Camera::processKeyInput(CAM_MOVEMENT dir, float dt)
 {
     float speed = travelSpeed * dt;
@@ -85,4 +91,35 @@ void Camera::processKeyInput(CAM_MOVEMENT dir, float dt)
     }
 
 }
+
+
+void Camera::processMouseInput(glm::vec2 pos)
+{
+    //glm::vec2 delta = pos - lastMousePos;
+
+
+    //delta *= sensitivity;
+
+    //// Update the yaw and pitch based on the mouse movement
+    //yaw += delta.x;
+    //pitch -= delta.y;  // Invert the vertical axis if needed (depending on your convention)
+
+    //// Constrain pitch to avoid flipping over
+    //if (pitch > 89.0f)
+    //    pitch = 89.0f;
+    //if (pitch < -89.0f)
+    //    pitch = -89.0f;
+
+    //// Update the camera target (direction) based on the new yaw and pitch
+    //glm::vec3 direction;
+    //direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    //direction.y = sin(glm::radians(pitch));
+    //direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+
+    //camTarget = glm::normalize(direction);
+
+    //// Update the last mouse position for the next frame
+    //lastMousePos = pos;
+}
+
 

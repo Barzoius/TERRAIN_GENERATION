@@ -122,9 +122,9 @@ void Window::ProcessInput()
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
-    if (glfwGetKey(mWindow, GLFW_KEY_W) == GLFW_PRESS)
-        mCamera.processKeyInput(Camera::FORWARD, deltaTime);
     if (glfwGetKey(mWindow, GLFW_KEY_S) == GLFW_PRESS)
+        mCamera.processKeyInput(Camera::FORWARD, deltaTime);
+    if (glfwGetKey(mWindow, GLFW_KEY_W) == GLFW_PRESS)
         mCamera.processKeyInput(Camera::BACKWARD, deltaTime);
     if (glfwGetKey(mWindow, GLFW_KEY_A) == GLFW_PRESS)
         mCamera.processKeyInput(Camera::LEFT, deltaTime);
@@ -134,6 +134,22 @@ void Window::ProcessInput()
         mCamera.processKeyInput(Camera::UP, deltaTime);
     if (glfwGetKey(mWindow, GLFW_KEY_F) == GLFW_PRESS)
         mCamera.processKeyInput(Camera::DOWN, deltaTime);
+
+    //if (glfwGetMouseButton(mWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+    //{
+    //    glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
+    //    double mouseX, mouseY;
+
+    //    glfwGetCursorPos(mWindow, &mouseX, &mouseY);
+
+    //    mCamera.processMouseInput(glm::vec2(mouseX, mouseY));
+
+    //}
+    //else if (glfwGetMouseButton(mWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
+    //{
+    //    glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    //}
 
 }
 

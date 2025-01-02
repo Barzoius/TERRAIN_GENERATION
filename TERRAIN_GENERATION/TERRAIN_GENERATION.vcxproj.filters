@@ -220,5 +220,11 @@
     <Image Include="Resources\SkyBox\EpicBlueSunset\+X.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Resources\Materials\rock-snow\RS_ROUGH.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Materials\jagged-rockface1\JA_NORMAL.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

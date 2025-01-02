@@ -60,15 +60,15 @@ void main()
      p.y = 0.5 * Height; 
     // p += normal * Height;
 
-    vec4 pos = model * p;
+     vec4 pos = model * p;
 
      Position = (pos).xyz;
     
      TexCoords = texCoord;
 
-     vec3 nRGB = texture(normalMap, texCoord).rgb;
+     vec3 nRBG = texture(normalMap, texCoord).rbg;
 
-     vec3 n = nRGB * 2.0 - 1.0;
+     vec3 n = nRBG * 2.0 - 1.0;
 
 
      vec3 deltaE1 = uVec.xyz;
@@ -81,7 +81,7 @@ void main()
 
      Tangent = normalize(f * (deltaV.y * deltaE1 - deltaU.y * deltaE2));
      Normal = normalize(n);
-     Bitangent = -normalize(cross(Normal, Tangent));
+     Bitangent = -normalize(cross(normalize(Normal), Tangent));
 
      gl_Position = projection * view * model * p;
 

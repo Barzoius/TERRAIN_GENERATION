@@ -34,7 +34,7 @@ public:
     void Update();
 
     void processKeyInput(CAM_MOVEMENT dir, float dt);
-    void processMouseInput();
+    void processMouseInput(glm::vec2);
     void processMouseWheelInput();
 
     glm::mat4x4 GetViewMatrix();
@@ -44,6 +44,12 @@ public:
     glm::vec3 GetPosition();
 
     const float zoom = 45.0f;
+
+    float GetSensitivity();
+
+    glm::vec3 U = glm::vec3(1.0f, 0.0f, 0.0f);
+    glm::vec3 V = glm::vec3(0.0f, 1.0f, 0.0f);
+    glm::vec3 N = glm::vec3(0.0f, 0.0f, 1.0f);
 
 private:
     glm::vec3 camPosition = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -55,16 +61,15 @@ private:
     glm::vec3 camY = glm::cross(camZ, camX); // UP
     glm::vec3 WorldUp;
 
-    glm::vec3 U = glm::vec3(1.0f, 0.0f, 0.0f);
-    glm::vec3 V = glm::vec3(0.0f, 1.0f, 0.0f);
-    glm::vec3 N = glm::vec3(0.0f, 0.0f, 1.0f);
+
+    glm::vec2 lastMousePos = glm::vec2(0.0, 0.0);
 
     glm::mat4x4 ViewMatrix;
 
-    const float yaw = -90.0f;
-    const float pitch = 0.0f;
+    float yaw = -90.0f;
+    float pitch = 0.0f;
     const float speed = 2.5f;
-    const float sensitivity = 0.1f;
+    float sensitivity = 0.1f;
     //const float zoom = 45.0f;
 
     static constexpr float travelSpeed = 12.0f;

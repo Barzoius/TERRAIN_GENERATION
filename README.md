@@ -19,12 +19,13 @@ different methods to simulate natural terrain features.
 
 - Triplanar texture mapping
 
+- Texture Bombing
+
 - Slope and Height based texture blending
 
 - PBR
 
 - LOD with tessellation shaders based on roughness
-
 
 
 
@@ -37,8 +38,19 @@ different methods to simulate natural terrain features.
 | ![](TERRAIN_GENERATION/Resources/ForReadME/FF16.png)  | ![](TERRAIN_GENERATION/Resources/ForReadME/FF32.png)| ![](TERRAIN_GENERATION/Resources/ForReadME/FF64.png)  |
 ### Fractal Brownian Noise
 
+## NormalMap Generation
 
-# First Result
+
+## Triplanar Texture Mapping
+
+Abrupt zone for better viewing of the effect:
+
+| TTM Off | TTM On | 
+|---|---|
+| ![](TERRAIN_GENERATION/Resources/ForReadME/triOff.png)  | ![](TERRAIN_GENERATION/Resources/ForReadME/TriOn.png)| 
+
+
+# First Results
 
 <img src="TERRAIN_GENERATION/Resources/ForReadME/Second.png" alt="Framework Diagram" style="width:100%;">
 
