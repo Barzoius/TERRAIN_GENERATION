@@ -67,6 +67,7 @@ void Texture::SetParams()
     //glCreateTextures(mSpecs.TARGET, 1, &texID);
     glTexParameteri(mSpecs.TARGET, GL_TEXTURE_WRAP_S, mSpecs.WRAP_S);
     glTexParameteri(mSpecs.TARGET, GL_TEXTURE_WRAP_T, mSpecs.WRAP_T);
+    glTexParameteri(mSpecs.TARGET, GL_TEXTURE_WRAP_R, mSpecs.WRAP_T);
     glTexParameteri(mSpecs.TARGET, GL_TEXTURE_MIN_FILTER, mSpecs.MIN);
     glTexParameteri(mSpecs.TARGET, GL_TEXTURE_MAG_FILTER, mSpecs.MAG);
 }

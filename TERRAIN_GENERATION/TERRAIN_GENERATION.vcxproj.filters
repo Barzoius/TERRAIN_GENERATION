@@ -208,9 +208,6 @@
     <Image Include="Resources\Materials\jagged-rockface1\JA_ALBEDO.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Resources\Materials\jagged-rockface1\CCA.png">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="output_texture.png">
       <Filter>Resource Files</Filter>
     </Image>

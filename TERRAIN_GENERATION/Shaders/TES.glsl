@@ -39,7 +39,7 @@ void main()
     vec2 t1 = (t11 - t10) * u + t10;
     vec2 texCoord = (t1 - t0) * v + t0;
 
-    Height = texture(heightMap, texCoord).r * 64.0 - 16.0;
+    Height = texture(heightMap, texCoord).r;
 
 
     vec4 p00 = gl_in[0].gl_Position;
@@ -57,7 +57,7 @@ void main()
     vec4 p1 = (p11 - p10) * u + p10;
     vec4 p = (p1 - p0) * v + p0;
 
-     p.y = 0.5 * Height; 
+     p.y = Height * 64.0; 
     // p += normal * Height;
 
      vec4 pos = model * p;

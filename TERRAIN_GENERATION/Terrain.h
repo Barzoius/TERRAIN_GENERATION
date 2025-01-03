@@ -19,8 +19,8 @@ public:
 
     void ControlWND() noexcept;
 
-    void SetHeightMap(std::unique_ptr<ShaderSuite>, int);
-    void SetNormalMap(std::unique_ptr<ShaderSuite>, int);
+    void SetHeightMap(std::unique_ptr<ShaderSuite>, float);
+    void SetNormalMap(std::unique_ptr<ShaderSuite>, float);
 
     void SetMaterialData(int);
 

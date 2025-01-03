@@ -64,7 +64,7 @@ vec4 TRIPLANAR_MAPPING(int texture)
 }
 
 
-vec4 TRIPLANAR_NORMAL_MAPPING(int texture)
+vec4 TRIPLANAR_AO_MAPPING(int texture)
 {
     vec3 blend = abs(Normal);
     blend = normalize(max(blend,  0.00001));
@@ -73,11 +73,29 @@ vec4 TRIPLANAR_NORMAL_MAPPING(int texture)
 
     blend /= vec3(b,b,b);
 
-    vec3 xN = 2.0 * texture(NORMALS, vec3(Position.yz * .6, texture)).rgb - 1.0;
-    vec3 yN = 2.0 * texture(NORMALS, vec3(Position.xz * .6, texture)).rgb - 1.0;
-    vec3 zN = 2.0 * texture(NORMALS, vec3(Position.xy * .6, texture)).rgb - 1.0;
+    vec3 xTex = texture(AO, vec3(Position.yz * .8, texture)).rgb;
+    vec3 yTex = texture(AO, vec3(Position.xz * .8, texture)).rgb;
+    vec3 zTex = texture(AO, vec3(Position.xy * .8, texture)).rgb;
 
-    vec4 N = vec4(xN * blend.x + yN * blend.y + zN * blend.z, 1.0);
+    vec4 Tex = vec4(xTex * blend.x + yTex * blend.y + zTex * blend.z, 1.0);
+
+    return Tex;
+}
+
+vec3 TRIPLANAR_NORMAL_MAPPING(int texture)
+{
+    vec3 blend = abs(Normal);
+    blend = normalize(max(blend,  0.00001));
+
+    float b = blend.x + blend.y + blend.z;
+
+    blend /= vec3(b,b,b);
+
+    vec3 xN = texture(NORMALS, vec3(Position.yz * .8, texture)).rgb;
+    vec3 yN = texture(NORMALS, vec3(Position.xz * .8, texture)).rgb;
+    vec3 zN = texture(NORMALS, vec3(Position.xy * .8, texture)).rgb;
+
+    vec3 N = vec3(xN * blend.x + yN * blend.y + zN * blend.z);
 
     return N;
 }
@@ -110,6 +128,7 @@ vec3 DirectionLight(vec3 n)
     return ambientLight + diffuseLight ;
 }
 
+float heightRanges[4] = float[](0.0, 0.2, 0.3, 1.0);
 
 void main()
 {
@@ -117,31 +136,93 @@ void main()
    vTBN();
    //mat3 TBN = mat3(Tangent, Bitangent, Normal);
 
-	float h = (Height + 16)/64.0f;
+	//float h = (Height + 16)/64.0;
 
-     vec3 normal = normalize(Normal);
-
-
-     normal = normalize(normal);
+    vec3 normal = normalize(Normal);
 
 
 
-     vec4 albedo0 = texture(ALBEDO, vec3(Position.xz, 0));
-     vec4 albedo1 = texture(ALBEDO, vec3(Position.xz, 1));
-     vec4 albedo2 = texture(ALBEDO, vec3(Position.xz, 2));
+     vec4 albedo0 = TRIPLANAR_MAPPING(0);
+     vec4 albedo1 = TRIPLANAR_MAPPING(1);
+     vec4 albedo2 = TRIPLANAR_MAPPING(2);
 
-     vec4 normal1 = TRIPLANAR_NORMAL_MAPPING(1);
+
+    ///---------------------SETING_TEXTURE_VECTORS---------------------//
+
+
+     vec4 albedos[4];
+     vec4 aos[3];
+     vec3 normals[4];
+
+
+ 
+     for(int i = 0; i <= 2; i++)
+     {
+         if(triplanar == true)
+         {
+            albedos[i] = TRIPLANAR_MAPPING(i);
+            //aos[i] = TRIPLANAR_AO_MAPPING(i);
+            vec3 tn = TRIPLANAR_NORMAL_MAPPING(i);
+            normals[i] = normalize(TBN * tn);
+         }
+         else
+         {
+
+             albedos[i] = texture(ALBEDO, vec3(Position.xz, i));
+             //aos[i] = texture(AO, vec3(Position.xz, i));
+
+             vec3 tn = texture(NORMALS, vec3(Position.xz, i)).rgb;
+             normals[i] = normalize(TBN * tn);
+         }
+     }
+
+     if(triplanar == true)
+     {
+        albedos[3] = TRIPLANAR_MAPPING(2);
+        vec3 tn = TRIPLANAR_NORMAL_MAPPING(2);
+        normals[3] = normalize(TBN * tn);
+        }
+     else
+     {
+        albedos[3] = texture(ALBEDO, vec3(Position.xz, 2));
+        vec3 tn = texture(NORMALS, vec3(Position.xz, 2)).rgb;
+        normals[3] = normalize(TBN * tn);
+
+      }
+
+     ///----------------------------------------------------------------//
+
+     vec4 finalAlbedo = vec4(0.0);
+     vec3 finalNormal = vec3(0.0);
+
+     float h =  clamp(Height,  0.0, 1.0);
+
+    if (h >= heightRanges[3]) {
+        finalAlbedo = albedos[2];
+    } else {
+        for (int i = 0; i <= 2; ++i) {
+         
+            if (h >= heightRanges[i] && h < heightRanges[i + 1]) 
+            {
+            float t = (h - heightRanges[i]) / (heightRanges[i + 1] - heightRanges[i]); 
+            finalAlbedo = mix(albedos[i], albedos[i + 1], t);
+            finalNormal = mix(normals[i], normals[i+1], t);
+            }
+        }
+    }
+
+     ///----------------------------------------------------------------//
 
      vec4 finalTex = vec4(0.0);
 
-        
 
      float slope = 1.0 - normal.y;
 
      if(slope < 0.2)
      {
         float blendFactor = slope / 0.2;
-        finalTex = mix(albedo2, albedo1, blendFactor);
+        finalTex = mix(albedo2, albedo0, blendFactor);
+
      }
 
      if((slope < 0.7) && (slope >= 0.2f))
@@ -152,7 +233,7 @@ void main()
      if(slope >= 0.7) 
      {
         //float blendFactor = slope / 0.7;
-        //finalTex = mix(albedo0, albedo1, blendFactor);;
+        //finalTex = mix(albedo0, albedo2, blendFactor);;
         finalTex = albedo2;
      }
 
@@ -164,13 +245,13 @@ void main()
 
     if (triplanar == true)
     {
-        tt = TRIPLANAR_MAPPING(1);
-        //normal =  TBN * TRIPLANAR_NORMAL_MAPPING(1).rgb;
+        tt = TRIPLANAR_MAPPING(0);
+        normal =  TBN * TRIPLANAR_NORMAL_MAPPING(0).rgb;
     }
     else
     {
-        tt = texture(ALBEDO, vec3(Position.xz, 1));
-        //normal = TBN * texture(NORMALS, vec3(Position.xz, 1)).rgb;
+        tt = texture(ALBEDO, vec3(Position.xz, 0));
+        normal = TBN * texture(NORMALS, vec3(Position.xz, 0)).rgb;
     }
 
  
@@ -179,9 +260,9 @@ void main()
 
 
 
-    vec3 lighting = DirectionLight(normal);
+    vec3 lighting = DirectionLight(finalNormal);
 
-    vec3 finalColor = tt.rgb * lighting;
+    vec3 finalColor = finalAlbedo.rgb * lighting;
 
     FragColor = vec4(finalColor, 1.0);
 

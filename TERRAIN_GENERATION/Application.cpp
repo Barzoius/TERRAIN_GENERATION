@@ -91,10 +91,10 @@ void Application::Run()
                            "Resources/SkyBox/EpicBlueSunset/+Z.png"});
 
 
-    int width = mWindow->GetWidth();
+    float width = mWindow->GetWidth();
     int height = mWindow->GetHeight();
-
-    width = width;
+    std::cout <<  std::endl;
+    std::cout << width<<std::endl;
     height = height * 2;
 
     terrain->SetHeightMap(std::make_unique<ShaderSuite>(std::initializer_list<std::pair<std::string_view, Shader::ShaderType>>{

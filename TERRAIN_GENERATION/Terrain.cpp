@@ -57,7 +57,7 @@ Texture* Terrain::GetNormalMap()
     return normalMap.get();
 }
 
-void Terrain::SetHeightMap(std::unique_ptr<ShaderSuite> compute, int rez)
+void Terrain::SetHeightMap(std::unique_ptr<ShaderSuite> compute, float rez)
 {
     computeHeightMap = std::move(compute);
 
@@ -73,7 +73,7 @@ void Terrain::SetHeightMap(std::unique_ptr<ShaderSuite> compute, int rez)
     heightMap = std::make_unique<Texture>(rez, rez, specs);
 }
 
-void Terrain::SetNormalMap(std::unique_ptr<ShaderSuite> compute, int rez)
+void Terrain::SetNormalMap(std::unique_ptr<ShaderSuite> compute, float rez)
 {
     computeNormalMap = std::move(compute);
 
@@ -109,8 +109,8 @@ void Terrain::SetMaterialData(int rez)
     albedos->SetUNIT(0);
 
     std::vector<std::string_view> albedoPATHS{
-       "Resources/Materials/rocky-dirt/RD_ALBEDO.png",
        "Resources/Materials/jagged-rockface1/JA_ALBEDO.png",
+       "Resources/Materials/slate2-tiled/ST_ALBEDO.png",
        "Resources/Materials/rock-snow/RS_ALBEDO.png",
     };
     
@@ -128,8 +128,9 @@ void Terrain::SetMaterialData(int rez)
     aos->SetUNIT(3);
 
     std::vector<std::string_view> aoPATHS{
-       "Resources/Materials/rocky-dirt/RD_AO.png",
+
        "Resources/Materials/jagged-rockface1/JA_NORMAL.png",
+       "Resources/Materials/slate2-tiled/ST_AO.png",
        "Resources/Materials/rock-snow/RS_AO.png",
     };
 
@@ -165,8 +166,8 @@ void Terrain::SetMaterialData(int rez)
     normals->SetUNIT(4);
 
     std::vector<std::string_view> normalPATHS{
-       "Resources/Materials/rocky-dirt/RD_NORMAL.png",
        "Resources/Materials/jagged-rockface1/JA_NORMAL.png",
+       "Resources/Materials/slate2-tiled/ST_NORMAL.png",
        "Resources/Materials/rock-snow/RS_NORMAL.png",
     };
 
