@@ -249,6 +249,7 @@ void Terrain::ControlWND() noexcept
 
 
 
+        ImGui::SliderInt("SEED", &seed, 1, 10);
         
         ImGui::Text("FBM");
         ImGui::SliderInt("OCTAVES", &octaves, 0, 16);

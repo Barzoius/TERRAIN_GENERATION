@@ -238,28 +238,6 @@ void main()
      }
 
 
-    vec4 albedoColor = texture(ALBEDO, vec3(Position.xz, 1));
-
-
-    vec4 tt = vec4(0.0);
-
-    if (triplanar == true)
-    {
-        tt = TRIPLANAR_MAPPING(0);
-        normal =  TBN * TRIPLANAR_NORMAL_MAPPING(0).rgb;
-    }
-    else
-    {
-        tt = texture(ALBEDO, vec3(Position.xz, 0));
-        normal = TBN * texture(NORMALS, vec3(Position.xz, 0)).rgb;
-    }
-
- 
-
-
-
-
-
     vec3 lighting = DirectionLight(finalNormal);
 
     vec3 finalColor = finalAlbedo.rgb * lighting;

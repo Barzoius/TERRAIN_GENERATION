@@ -40,6 +40,9 @@ different methods to simulate natural terrain features.
 
 ## NormalMap Generation
 
+| Prewitt | Sobel | Scharr |
+|---|---|---|
+| ![](TERRAIN_GENERATION/Resources/ForReadME/prewitt.png)  | ![](TERRAIN_GENERATION/Resources/ForReadME/sobel.png)| ![](TERRAIN_GENERATION/Resources/ForReadME/scharr.png)  |
 
 ## Triplanar Texture Mapping
 

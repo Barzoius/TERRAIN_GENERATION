@@ -59,6 +59,8 @@ public:
     float noise_scale;
     float exponent;
 
+    int seed = 1.0;
+
     int iterations;
 
     bool triplanar;

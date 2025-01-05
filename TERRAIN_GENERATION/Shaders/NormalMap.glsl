@@ -173,10 +173,10 @@ void main()
 
     if(operator == 1)
     {
-        sobel();
+        prewitt();
     }
     else if(operator == 2)
     {
-        sobel();
+        prewitt();
     }
 }

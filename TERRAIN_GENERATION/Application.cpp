@@ -93,8 +93,8 @@ void Application::Run()
 
     float width = mWindow->GetWidth();
     int height = mWindow->GetHeight();
-    std::cout <<  std::endl;
-    std::cout << width<<std::endl;
+
+    width = 256.0f;
     height = height * 2;
 
     terrain->SetHeightMap(std::make_unique<ShaderSuite>(std::initializer_list<std::pair<std::string_view, Shader::ShaderType>>{
@@ -187,6 +187,9 @@ void Application::Run()
         terrain->GetComputeHeight()->setFloat("persistence", terrain->persistance);
         terrain->GetComputeHeight()->setFloat("scale", terrain->noise_scale);
         terrain->GetComputeHeight()->setFloat("exponent", terrain->exponent);
+
+        terrain->GetComputeHeight()->setFloat("seed", terrain->seed);
+
 
 
 
