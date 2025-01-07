@@ -53,15 +53,26 @@ private:
 
 
 public:
-    int octaves;
-    float lacunarity;
-    float persistance;
-    float noise_scale;
-    float exponent;
 
     int seed = 1.0;
 
-    int iterations;
 
+        int octaves;
+        float lacunarity;
+        float persistance;
+        float noise_scale;
+        float exponent;
+
+
+
+        int step;
+        float scale;
+   
+
+
+        int iterations;
+    
+   
+    float rooughWeight = 1.0;
     bool triplanar;
 };

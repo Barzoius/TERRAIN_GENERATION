@@ -249,10 +249,10 @@ void Terrain::ControlWND() noexcept
 
 
 
-        ImGui::SliderInt("SEED", &seed, 1, 10);
+        ImGui::SliderInt("SEED", &seed, 1, 16);
         
         ImGui::Text("FBM");
-        ImGui::SliderInt("OCTAVES", &octaves, 0, 16);
+        ImGui::SliderInt("OCTAVES", &octaves, 1, 16);
         ImGui::SliderFloat("Lacunarity", &lacunarity, 0.0f, 1.0f);
         ImGui::SliderFloat("Persistance", &persistance, 0.0f, 1.0f);
         ImGui::SliderFloat("Scale", &noise_scale, 0.0f, 20.0f);

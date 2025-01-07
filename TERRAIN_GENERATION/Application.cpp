@@ -27,7 +27,7 @@ Application::Application()
     light->SetPosition(glm::vec3(1.5f, 3.0f, 0.0f));
 
 
-    terrain = new Terrain(20.0f);
+    terrain = new Terrain(60.0f);
     terrain->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
     terrain->SetRotation(35.0f, 35.0f, 35.0f);
 
@@ -125,17 +125,14 @@ void Application::Run()
     glm::mat4 cameraView;
     glm::mat4 projection = glm::mat4(1.0f);
 
-    GLint maxTessLevel;
+    /*GLint maxTessLevel;
     glGetIntegerv(GL_MAX_TESS_GEN_LEVEL, &maxTessLevel);
-    std::cout << "Max available tess level: " << maxTessLevel << std::endl;
+    std::cout << "Max available tess level: " << maxTessLevel << std::endl;*/
 
 
     GLuint VAO;
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
-
-    // Since the vertex data is hardcoded in the shader, no VBO setup is needed here.
-    // Just ensure the VAO is created and bound.
 
     glBindVertexArray(0);
  
@@ -158,7 +155,7 @@ void Application::Run()
         //    std::cout << "OpenGL Error: " << error << std::endl;
         //}
 
-        projection = glm::perspective(glm::radians(45.0f), (float)mWindow->GetWidth() / (float)mWindow->GetHeight(), 0.1f, 100.0f);
+        projection = glm::perspective(glm::radians(45.0f), (float)mWindow->GetWidth() / (float)mWindow->GetHeight(), 0.1f, 500.0f);
 
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -220,7 +217,11 @@ void Application::Run()
         }
 
 
+
         terrain->GetShader()->use();
+
+        terrain->GetShader()->setFloat("roughWeight", 1.0);
+
         terrain->GetShader()->setInt("heightMap", 1);
         terrain->GetShader()->setInt("normalMap", 2);
 

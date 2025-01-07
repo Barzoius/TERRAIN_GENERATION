@@ -6,6 +6,10 @@ layout (local_size_x = 16, local_size_y = 16) in;
 
 layout (rgba32f, binding = 0) uniform image2D hMap;
 
+layout (rgba32f, binding = 1) uniform image2D input_hMap;
+
+
+
 uniform int seed;
 
 uniform vec2 resolution;
@@ -18,7 +22,6 @@ uniform float lacunarity;
 uniform float persistance;
 uniform float noise_scale;
 uniform float exponent;
-
 
 
 ///-----------------------------RANDS-----------------------------///
@@ -49,10 +52,10 @@ float noise (in vec2 st) {
     vec2 f = fract(st);
 
     // Four corners in 2D of a tile
-    float a = random(i);
-    float b = random(i + vec2(1.0, 0.0));
-    float c = random(i + vec2(0.0, 1.0));
-    float d = random(i + vec2(1.0, 1.0));
+    float a = rand(i);
+    float b = rand(i + vec2(1.0, 0.0));
+    float c = rand(i + vec2(0.0, 1.0));
+    float d = rand(i + vec2(1.0, 1.0));
 
     vec2 u = f * f * (3.0 - 2.0 * f);
 
@@ -72,14 +75,15 @@ float fbn (in vec2 st) {
 
 
     for (int i = 0; i < 6; i++) {
-        st *= 2.0;
-        value += amplitude * (0.5 * noise(st));
+        vec2 ss = (frequency * 2.0 * st);
+        value += amplitude * (0.5 * noise(ss));
 
         weight += amplitude;
-        frequency *= 0.5;
+        frequency *= 2.0;
         amplitude *= .5;
     }
-    return value;
+    float height = value / weight;
+    return height;
 }
 
 
@@ -160,10 +164,10 @@ float quantize(float value, float step) {
 void diamondStep(ivec2 coord, int stepSize, float scale) {
     int halfStep = stepSize / 2;
 
-    float tl = imageLoad(hMap, coord).r;
-    float tr = imageLoad(hMap, coord + ivec2(stepSize, 0)).r;
-    float bl = imageLoad(hMap, coord + ivec2(0, stepSize)).r;
-    float br = imageLoad(hMap, coord + ivec2(stepSize, stepSize)).r;
+    float tl = imageLoad(input_hMap, coord).r;
+    float tr = imageLoad(input_hMap, coord + ivec2(stepSize, 0)).r;
+    float bl = imageLoad(input_hMap, coord + ivec2(0, stepSize)).r;
+    float br = imageLoad(input_hMap, coord + ivec2(stepSize, stepSize)).r;
 
     float avg = (tl + tr + bl + br) * 0.25;
     float offset = (rand(vec2(coord)) * 2.0 - 1.0) * scale;
@@ -176,16 +180,17 @@ void diamondStep(ivec2 coord, int stepSize, float scale) {
 void squareStep(ivec2 coord, int stepSize, float scale) {
     int halfStep = stepSize / 2;
 
-    float t = imageLoad(hMap, coord + ivec2(0, -halfStep)).r;
-    float b = imageLoad(hMap, coord + ivec2(0, halfStep)).r;
-    float l = imageLoad(hMap, coord + ivec2(-halfStep, 0)).r;
-    float r = imageLoad(hMap, coord + ivec2(halfStep, 0)).r;
+    float t = imageLoad(input_hMap, coord + ivec2(0, -halfStep)).r;
+    float b = imageLoad(input_hMap, coord + ivec2(0, halfStep)).r;
+    float l = imageLoad(input_hMap, coord + ivec2(-halfStep, 0)).r;
+    float r = imageLoad(input_hMap, coord + ivec2(halfStep, 0)).r;
 
     float avg = (t + b + l + r) * 0.25;
 
     float offset = (rand(vec2(coord)) * 2.0 - 1.0) * scale;
 
     float value = clamp(avg + offset, 0.0, 1.0);
+
     imageStore(hMap, coord, vec4(value, value, value, 1.0));
 
 }
@@ -202,37 +207,14 @@ void main()
         return; 
     }
 
-
-    int stepSize = int(resolution);
-    float scale = 0.5;
+     vec2 uv = (gl_GlobalInvocationID.xy / resolution.xy);
 
 
-     if (texel_coord.x == 0 && texel_coord.y == 0) {
-        imageStore(hMap, ivec2(0, 0), vec4(rand(vec2(0.0)), 0.0, 0.0, 1.0));
-        imageStore(hMap, ivec2(stepSize, 0), vec4(rand(vec2(1.0)), 0.0, 0.0, 1.0));
-        imageStore(hMap, ivec2(0, stepSize), vec4(rand(vec2(2.0)), 0.0, 0.0, 1.0));
-        imageStore(hMap, ivec2(stepSize, stepSize), vec4(rand(vec2(3.0)), 0.0, 0.0, 1.0));
-    }
 
 
-    while (stepSize > 1) {
-        int halfStep = stepSize / 2;
+    float height = 0.0;
+    height+=fbn(uv);
 
-        if ((texel_coord.x % stepSize == 0) && (texel_coord.y % stepSize == 0)) {
-            diamondStep(texel_coord, stepSize, scale);
-        }
-
-        if ((texel_coord.x % halfStep == 0) && (texel_coord.y % stepSize == 0)) {
-            squareStep(texel_coord, stepSize, scale);
-        }
-
-        if ((texel_coord.x % stepSize == 0) && (texel_coord.y % halfStep == 0)) {
-            squareStep(texel_coord, stepSize, scale);
-        }
-
-        stepSize /= 2;
-        scale *= 0.5;
-    }
-
+    imageStore(hMap, texel_coord, vec4(height));
 
 }
