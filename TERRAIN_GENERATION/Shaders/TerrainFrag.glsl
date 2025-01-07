@@ -90,7 +90,7 @@ float TRIPLANAR_AO_MAPPING(int texture)
 }
 ///-----------------------------ROUGHNESS--------------------------------///
 
-float TRIPLANAR_ROGHNESS_MAPPING(int texture)
+float TRIPLANAR_ROUGHNESS_MAPPING(int texture)
 {
     vec3 blend = abs(Normal);
     blend = normalize(max(blend,  0.00001));
@@ -179,7 +179,7 @@ float SMITH_GF(vec3 n, vec3 v, vec3 l, float rough) // the Smith method
     return ggx1 * ggx2;
 }
 
-float SCHLICK_FRESNEL(float cosAngle, vec3 F0)
+vec3 SCHLICK_FRESNEL(float cosAngle, vec3 F0)
 {
     return F0 + (1.0 - F0) * pow(clamp(1.0 - cosAngle, 0.0, 1.0), 5.0);
 }
@@ -215,7 +215,43 @@ vec3 DirectionLight(vec3 n)
 
 float heightRanges[4] = float[](0.0, 0.2, 0.3, 1.0);
 
+vec3 ComputeColor(vec3 NORMAL, 
+                  vec3 VIEW, 
+                  vec3 LIGHT_DIR, 
+                  vec3 LIGHT_POS, 
+                  vec3 F0, 
+                  vec3 albedo,
+                  float roughness,
+                  float metallic)
+{
+    vec3 RE = vec3(0.0);
 
+    vec3 HALF = normalize(VIEW + LIGHT_DIR);
+
+    float distance = length(LIGHT_POS - Position);
+
+    float attenuation = 1.0 / (distance * distance);
+
+    vec3 radiance = vec3(1.0); // white light
+
+    float NDF = TR_GGX_NDF(NORMAL, HALF, roughness);
+    float GF = S_GGX_GF(max(dot(NORMAL, HALF), 0.0), roughness);
+    vec3 FRESNEL = SCHLICK_FRESNEL(max(dot(HALF, VIEW), 0.0), F0);
+
+    float specAtt = 4.0 * max(dot(NORMAL, VIEW), 0.0) 
+                        * max(dot(NORMAL, LIGHT_DIR), 0.0) + 0.0001;
+
+    vec3 specular = (NDF * GF * FRESNEL) /  specAtt;
+
+    vec3 specConstant = FRESNEL;
+
+    vec3 diffConstant = vec3(1.0) - metallic ;
+
+    RE += (diffConstant * albedo / PI + specular) 
+            * radiance * max(dot(NORMAL, LIGHT_DIR), 0.0);
+
+    return RE;
+}
 
 void main()
 {
@@ -223,7 +259,6 @@ void main()
    vTBN();
    //mat3 TBN = mat3(Tangent, Bitangent, Normal);
 
-	//float h = (Height + 16)/64.0;
 
     vec3 normal = normalize(Normal);
 
@@ -236,8 +271,6 @@ void main()
      float aos[4];
      float rough[4];
      float metallic[4];
-
-
  
      for(int i = 0; i <= 2; i++)
      {
@@ -246,7 +279,7 @@ void main()
             albedos[i] = TRIPLANAR_MAPPING(i);
 
             aos[i] = TRIPLANAR_AO_MAPPING(i);
-            rough[i] = TRIPLANAR_ROGHNESS_MAPPING(i);
+            rough[i] = TRIPLANAR_ROUGHNESS_MAPPING(i);
             metallic[i] = TRIPLANAR_METALLIC_MAPPING(i);
 
             vec3 tn = TRIPLANAR_NORMAL_MAPPING(i);
@@ -271,13 +304,22 @@ void main()
         albedos[3] = TRIPLANAR_MAPPING(2);
 
         aos[3] = TRIPLANAR_AO_MAPPING(2);
+        rough[3] = TRIPLANAR_ROUGHNESS_MAPPING(2);
+
+        metallic[3] = TRIPLANAR_METALLIC_MAPPING(2);
+
         vec3 tn = TRIPLANAR_NORMAL_MAPPING(2);
         normals[3] = normalize(TBN * tn);
+
         }
      else
      {
         albedos[3] = texture(ALBEDO, vec3(Position.xz, 2));
+
         aos[3] = texture(AO, vec3(Position.xz, 2)).r;
+        rough[3] = texture(ROUGHNESS, vec3(Position.xz, 2)).r;
+        metallic[3] = texture(METALLIC, vec3(Position.xz, 2)).r;
+
         vec3 tn = texture(NORMALS, vec3(Position.xz, 2)).rgb;
         normals[3] = normalize(TBN * tn);
 
@@ -297,7 +339,10 @@ void main()
 
     if (h >= heightRanges[3]) {
         finalAlbedo = albedos[2];
+        finalNormal = normals[2];
         finalAO = aos[2];
+        finalRough = rough[2];
+        finalMetallic = metallic[2];
     } else {
         for (int i = 0; i <= 2; ++i) {
          
@@ -317,11 +362,39 @@ void main()
 
     ///----FINAL LIGHTING---///
 
-   // vec3 ambient = vec3(0.03) * finalAlbedo.rgb * finalAO; 
+
+
+    vec3 F0 = vec3(0.04); 
+    F0 = mix(F0, finalAlbedo.rgb, finalMetallic);
 
     vec3 lighting = DirectionLight(finalNormal);
 
-    vec3 finalColor = finalAlbedo.rgb * lighting ;
+    vec3 R = vec3(0.0);
+
+
+    vec3 lightDir = normalize(lightOrigin - Position);
+    vec3 viewDir = normalize(camOrigin - Position);
+
+
+    R += ComputeColor(finalNormal, 
+                      viewDir, 
+                      lightDir, 
+                      lightOrigin, 
+                      F0, 
+                      finalAlbedo.rgb, 
+                      finalRough,
+                      finalMetallic);
+
+
+    vec3 ambient = vec3(0.03) * finalAlbedo.rgb * finalAO; 
+
+    vec3 finalColor = ambient + R;
+
+    //vec3 finalColor = finalAlbedo.rgb * lighting * finalAO;
+
+    //finalColor = finalColor / (finalColor + vec3(1.0));
+
+    //finalColor = pow(finalColor, vec3(1.0/2.2));
 
     FragColor = vec4(finalColor, 1.0);
 
