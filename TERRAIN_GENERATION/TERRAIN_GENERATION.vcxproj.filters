@@ -211,7 +211,7 @@
     <Image Include="output_texture.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Resources\Materials\jagged-rockface1\JR_AO.png">
+    <Image Include="Resources\Materials\jagged-rockface1\JA_AO.png">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Resources\SkyBox\EpicBlueSunset\+X.png">

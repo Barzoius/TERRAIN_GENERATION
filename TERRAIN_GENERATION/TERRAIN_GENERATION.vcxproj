@@ -205,7 +205,7 @@
     <Image Include="Resources\HeightMaps\HMAP_2.png" />
     <Image Include="Resources\Materials\jagged-rockface1\JA_ALBEDO.png" />
     <Image Include="Resources\Materials\jagged-rockface1\JA_NORMAL.png" />
-    <Image Include="Resources\Materials\jagged-rockface1\JR_AO.png" />
+    <Image Include="Resources\Materials\jagged-rockface1\JA_AO.png" />
     <Image Include="Resources\Materials\rock-snow\RS_ALBEDO.png" />
     <Image Include="Resources\Materials\rock-snow\RS_ROUGH.png" />
     <Image Include="Resources\Materials\rocky-dirt\RD_ALBEDO.png" />

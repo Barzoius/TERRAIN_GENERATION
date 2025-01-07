@@ -129,7 +129,7 @@ void Terrain::SetMaterialData(int rez)
 
     std::vector<std::string_view> aoPATHS{
 
-       "Resources/Materials/jagged-rockface1/JA_NORMAL.png",
+       "Resources/Materials/jagged-rockface1/JA_AO.png",
        "Resources/Materials/slate2-tiled/ST_AO.png",
        "Resources/Materials/rock-snow/RS_AO.png",
     };
@@ -143,20 +143,20 @@ void Terrain::SetMaterialData(int rez)
     //std::cout << aos->GetUnit() << std::endl;
     ///----------------------------------ROUGHNESS----------------------------------///
 
-    //roughness = std::make_unique<Texture>(2048, 2048, specs);
+    roughness = std::make_unique<Texture>(2048, 2048, specs);
 
-    //roughness->SetUNIT(2);
+    roughness->SetUNIT(5);
 
-    //std::vector<std::string_view> roughnessPATHS{
-    //   "Resources/Materials/rocky-dirt/RD_ROUGH.png",
-    //   "Resources/Materials/jagged-rockface1/JA_ROUGH.png",
-    //   "Resources/Materials/rock-snow/RS_ROUGHT.png",
-    //};
+    std::vector<std::string_view> roughnessPATHS{
+       "Resources/Materials/jagged-rockface1/JA_ROUGH.png",
+       "Resources/Materials/slate2-tiled/ST_ROUGH.png",
+       "Resources/Materials/rock-snow/RS_ROUGH.png",
+    };
 
-    //roughness->SetActive();
-    //roughness->Bind();
-    //roughness->LoadTexture2DArray(roughnessPATHS);
-    //roughness->SetParams();
+    roughness->SetActive();
+    roughness->Bind();
+    roughness->LoadTexture2DArray(roughnessPATHS);
+    roughness->SetParams();
     //roughness->Unbind();
 
     ///-----------------------------------NORMAL-----------------------------------///
@@ -178,22 +178,22 @@ void Terrain::SetMaterialData(int rez)
     //normals->Unbind();
 
 
-    ///-----------------------------------HEIGHT-----------------------------------///
+    ///----------------------------------METALLIC----------------------------------///
 
-    //heights = std::make_unique<Texture>(2048, 2048, specs);
+    heights = std::make_unique<Texture>(2048, 2048, specs);
 
-    //heights->SetUNIT(4);
+    heights->SetUNIT(6);
 
-    //std::vector<std::string_view> heightPATHS{
-    //   "Resources/Materials/rocky-dirt/RD_HEIGHT.png",
-    //   "Resources/Materials/jagged-rockface1/JA_HEIGHT.png",
-    //   "Resources/Materials/rock-snow/RS_HEIGHT.png",
-    //};
+    std::vector<std::string_view> heightPATHS{
+       "Resources/Materials/jagged-rockface1/JA_METALLIC.png", 
+       "Resources/Materials/slate2-tiled/ST_METALLIC.png",
+       "Resources/Materials/rock-snow/RS_METALLIC.png",
+    };
 
-    //heights->SetActive();
-    //heights->Bind();
-    //heights->LoadTexture2DArray(heightPATHS);
-    //heights->SetParams();
+    heights->SetActive();
+    heights->Bind();
+    heights->LoadTexture2DArray(heightPATHS);
+    heights->SetParams();
     //heights->Unbind();
 
 }

@@ -27,7 +27,7 @@ Application::Application()
     light->SetPosition(glm::vec3(1.5f, 3.0f, 0.0f));
 
 
-    terrain = new Terrain(60.0f);
+    terrain = new Terrain(20.0f);
     terrain->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
     terrain->SetRotation(35.0f, 35.0f, 35.0f);
 
@@ -220,7 +220,8 @@ void Application::Run()
 
         terrain->GetShader()->use();
 
-        terrain->GetShader()->setFloat("roughWeight", 1.0);
+        terrain->GetShader()->setFloat("roughWeight", 0.2);
+        
 
         terrain->GetShader()->setInt("heightMap", 1);
         terrain->GetShader()->setInt("normalMap", 2);
@@ -228,12 +229,17 @@ void Application::Run()
         terrain->GetShader()->setVec3("camOrigin", mWindow->mCamera.GetPosition());
         terrain->GetShader()->setVec3("lightOrigin", light->GetPosition());
 
-         terrain->GetShader()->setInt("ALBEDO", 0);
-         terrain->GetShader()->setInt("AO", 3);
-         //terrain->GetShader()->setInt("ROUGHNESS", 4);
-         terrain->GetShader()->setInt("NORMALS", 4);
+        terrain->GetShader()->setInt("ALBEDO", 0);
 
-         terrain->GetShader()->setBool("triplanar", terrain->triplanar);
+        terrain->GetShader()->setInt("AO", 3);
+
+        terrain->GetShader()->setInt("NORMALS", 4);
+
+        terrain->GetShader()->setInt("ROUGHNESS", 5);
+
+        terrain->GetShader()->setInt("METALLIC", 6);
+
+        terrain->GetShader()->setBool("triplanar", terrain->triplanar);
 
 
      
