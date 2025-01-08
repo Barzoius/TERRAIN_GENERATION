@@ -19,6 +19,7 @@ uniform vec3 camOrigin;
 uniform vec3 lightOrigin;
 
 uniform bool triplanar;
+uniform bool bombIT;
 uniform bool PBR;
 
 in vec3 Position;
@@ -33,6 +34,13 @@ mat3 TBN;
 
 const float PI = 3.14159265359;
 
+vec4 hash4( vec2 p ) { return fract(sin(vec4( 1.0+dot(p,vec2(37.0,17.0)), 
+                                              2.0+dot(p,vec2(11.0,47.0)),
+                                              3.0+dot(p,vec2(41.0,29.0)),
+                                              4.0+dot(p,vec2(23.0,31.0))))*103.0); }
+
+
+
 // function taken from https://learnopengl.com/
 void vTBN()
 {
@@ -45,6 +53,39 @@ void vTBN()
     vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
     vec3 B  = -normalize(cross(N, T));
     TBN = mat3(T, B, N);
+}
+
+///-------------------------------TEXTURE_BOMBING-------------------------------///
+
+vec4 BombIT(sampler2DArray tex, vec3 uv, int layer)
+{
+    vec2 p = floor( uv.xy );
+    vec2 f = fract( uv.xy );
+
+    vec4 va = vec4( 0.0 );
+    float wt = 0.0;
+
+    for( int j=-1; j<=1; j++ )
+    {
+        for( int i=-1; i<=1; i++ )
+        {
+            vec2 g = vec2( float(i), float(j) );
+
+            vec4 o = hash4( p + g );
+            vec2 r = g - f + o.xy;
+
+            float d = dot(r,r);
+            float w = exp(-5.0*d );
+
+            vec4 c = texture(tex, vec3(uv.xy + o.zw, layer));
+
+            va += w*c;
+            wt += w;
+
+        }
+    }
+    // normalization
+    return va/wt;
 }
 
 ///-------------------------TRIPLANAR_MAPPING_FUNCTIONS-------------------------///
@@ -61,9 +102,23 @@ vec4 TRIPLANAR_MAPPING(int texture)
 
     blend /= vec3(b,b,b);
 
-    vec3 xTex = texture(ALBEDO, vec3(Position.yz * .8, texture)).rgb;
-    vec3 yTex = texture(ALBEDO, vec3(Position.xz * .8, texture)).rgb;
-    vec3 zTex = texture(ALBEDO, vec3(Position.xy * .8, texture)).rgb;
+    vec3 xTex = vec3(0.0);
+    vec3 yTex = vec3(0.0);
+    vec3 zTex = vec3(0.0);
+
+
+    if(bombIT == true)
+    {
+        xTex += BombIT(ALBEDO, vec3(Position.yz * 0.8, texture), texture).rgb;
+        yTex += BombIT(ALBEDO, vec3(Position.xz * 0.8, texture), texture).rgb;
+        zTex += BombIT(ALBEDO, vec3(Position.xy * 0.8, texture), texture).rgb;
+    }
+    else
+    {
+        xTex += texture(ALBEDO, vec3(Position.yz * .8, texture)).rgb;
+        yTex += texture(ALBEDO, vec3(Position.xz * .8, texture)).rgb;
+        zTex += texture(ALBEDO, vec3(Position.xy * .8, texture)).rgb;
+    }
 
     vec4 Tex = vec4(xTex * blend.x + yTex * blend.y + zTex * blend.z, 1.0);
 
@@ -290,16 +345,18 @@ void main()
          else
          {
 
-             albedos[i] = texture(ALBEDO, vec3(Position.xz, i));
+                 albedos[i] = texture(ALBEDO, vec3(Position.xz, i));
 
-             aos[i] = texture(AO, vec3(Position.xz, i)).r;
-             rough[i] = texture(ROUGHNESS, vec3(Position.xz, i)).r;
-             metallic[i] = texture(METALLIC, vec3(Position.xz, i)).r;
+                 aos[i] = texture(AO, vec3(Position.xz, i)).r;
+                 rough[i] = texture(ROUGHNESS, vec3(Position.xz, i)).r;
+                 metallic[i] = texture(METALLIC, vec3(Position.xz, i)).r;
 
-             vec3 tn = texture(NORMALS, vec3(Position.xz, i)).rgb;
-             normals[i] = normalize(TBN * tn);
+                 vec3 tn = texture(NORMALS, vec3(Position.xz, i)).rgb;
+                 normals[i] = normalize(TBN * tn);
+             
          }
      }
+
 
      if(triplanar == true)
      {

@@ -190,6 +190,8 @@ void Application::Run()
 
         terrain->GetComputeHeight()->setInt("alg", terrain->Alg);
 
+       // terrain->GetComputeHeight()->setInt("roughFactor", terrain->roughFactor);
+
         if (terrain->Alg == 0 || terrain->Alg == 2)
         {
             glDispatchCompute((width) / 16, (width) / 16, 1);
@@ -288,6 +290,9 @@ void Application::Run()
         terrain->GetShader()->setInt("METALLIC", 6);
 
         terrain->GetShader()->setBool("triplanar", terrain->triplanar);
+
+        terrain->GetShader()->setBool("bombIT", terrain->bombIT);
+
 
         terrain->GetShader()->setBool("PBR", terrain->PBR);
 

@@ -253,14 +253,17 @@ void Terrain::ControlWND() noexcept
         
         ImGui::Text("FBM");
         ImGui::SliderInt("OCTAVES", &octaves, 1, 16);
-        ImGui::SliderFloat("Lacunarity", &lacunarity, 0.0f, 1.0f);
-        ImGui::SliderFloat("Persistance", &persistance, 0.0f, 1.0f);
+        ImGui::SliderFloat("Lacunarity", &lacunarity, 0.0f, 8.0f);
+        ImGui::SliderFloat("Persistance", &persistance, 0.0f, 8.0f);
         ImGui::SliderFloat("Scale", &noise_scale, 0.0f, 20.0f);
         ImGui::SliderFloat("Exponent", &exponent, 0.0f, 5.0f);
 
         ImGui::Text("FF");
         ImGui::SliderInt("Iterations", &iterations, 16, 100);
        
+
+        //ImGui::Text("DS");
+        //ImGui::SliderFloat("RoughFactor", &roughFactor, 1.0, 8.0);
 
         ImGui::Text("NormalMap");
         ImGui::Image((void*)(intptr_t)this->GetNormalMap()->GetID(), ImVec2(150, 150));
@@ -269,6 +272,8 @@ void Terrain::ControlWND() noexcept
         ImGui::Text("Texture Options");
 
         ImGui::Checkbox("TriplanarTexturing", &triplanar);
+
+        ImGui::Checkbox("Texturing Bombing", &bombIT);
 
         ImGui::Checkbox("PBR", &PBR);
 

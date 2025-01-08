@@ -57,16 +57,17 @@ public:
     int seed = 1.0;
 
 
-        int octaves;
-        float lacunarity;
-        float persistance;
-        float noise_scale;
-        float exponent;
+        int octaves = 1.0;
+        float lacunarity = 1.0;
+        float persistance = 1.0;
+        float noise_scale = 1.0;
+        float exponent = 1.0;
 
 
 
         int stepSize = 256;
         float scale = 0.5;
+        float roughFactor = 1;
    
 
 
@@ -76,6 +77,8 @@ public:
     
    
     float rooughWeight = 1.0;
+
+    bool bombIT = false;
     bool triplanar;
     bool PBR = false;
 };

@@ -30,7 +30,7 @@ uniform float scale;
 
 uniform int stepType;
 
-
+uniform float roughFactor;
 
 ///-----------------------------RANDS-----------------------------///
 
@@ -47,6 +47,11 @@ float random (in vec2 st) {
 
 float rand(vec2 st) {
     return fract(sin(dot(st.xy + float(seed), vec2(12.9898, 78.233))) * 43758.5453);
+}
+
+vec2 randomGradient(vec2 gridID) {
+    float angle = rand(gridID) * 6.28318530718; // Random angle in radians (2 * PI)
+    return vec2(cos(angle), sin(angle));       // Unit vector as gradient
 }
 
 ///------------------------------FBM------------------------------///
@@ -72,6 +77,45 @@ float noise (in vec2 st) {
             (d - b) * u.x * u.y;
 }
 
+float pNoise(in vec2 uv)
+{
+    //uv = uv * 4;
+
+    vec2 gridID = floor(uv);
+    vec2 gridUV = fract(uv);
+
+    vec2 bl = gridID + vec2(0.0, 0.0);
+    vec2 br = gridID + vec2(1.0, 0.0);
+    vec2 tl = gridID + vec2(0.0, 1.0);
+    vec2 tr = gridID + vec2(1.0, 1.0);
+
+    vec2 a = randomGradient(gridID);
+    vec2 b = randomGradient(gridID + vec2(1.0, 0.0));
+    vec2 c = randomGradient(gridID + vec2(0.0, 1.0));
+    vec2 d = randomGradient(gridID + vec2(1.0, 1.0));
+
+    vec2 toBL = gridUV - vec2(0.0, 0.0);
+    vec2 toBR = gridUV - vec2(1.0, 0.0);
+    vec2 toTL = gridUV - vec2(0.0, 1.0);
+    vec2 toTR = gridUV - vec2(1.0, 1.0);
+
+    float dotBL = dot(a, toBL);
+    float dotBR = dot(b, toBR);
+    float dotTL = dot(c, toTL);
+    float dotTR = dot(d, toTR);
+
+    gridUV = smoothstep(0.0, 1.0, gridUV);
+
+    float B = mix(dotBL, dotBR, gridUV.x);
+    float T = mix(dotTL, dotTR, gridUV.x);
+
+    float value = mix(B, T, gridUV.y);
+
+
+    return value;
+
+}
+
 float fbn (in vec2 st) {
     // Initial values
     st = st * 2.0 - 1.0;
@@ -82,9 +126,9 @@ float fbn (in vec2 st) {
     float weight = 0.0;
 
 
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < octaves; i++) {
         vec2 ss = (frequency * 2.0 * st);
-        value += amplitude * (0.5 * noise(ss));
+        value += amplitude * (0.5 *  noise(ss));
 
         weight += amplitude;
         frequency *= 2.0;
@@ -95,17 +139,6 @@ float fbn (in vec2 st) {
 }
 
 
-float fbm( in vec2 x, in float H )
-{    
-    float t = 0.0;
-    for(int i= 0; i < 16; i++ )
-    {
-        float f = pow( 2.0, float(i) );
-        float a = pow( f, -H );
-        t += a*noise(f*x);
-    }
-    return t;
-}
 
 
 ///------------------------------FF------------------------------///
@@ -165,10 +198,6 @@ vec4 mean_filter(in ivec2 pixel, in ivec2 kernelSize)
 
 ///-------------------------------MDD-------------------------------///
 
-float quantize(float value, float step) {
-    return floor(value / step + 0.5) * step;
-}
-
 void diamondStep(ivec2 coord, int stepSize, float scale) {
     int halfStep = stepSize / 2;
 
@@ -181,6 +210,8 @@ void diamondStep(ivec2 coord, int stepSize, float scale) {
     float offset = (rand(vec2(coord)) * 2.0 - 1.0) * scale;
 
     float value = clamp(avg + offset, 0.0, 1.0);
+
+    //value *= pow(2, -roughFactor);
 
     imageStore(hMap, coord + ivec2(halfStep, halfStep), vec4(value, value, value, 1.0));
 
@@ -200,6 +231,8 @@ void squareStep(ivec2 coord, int stepSize, float scale) {
     float offset = (rand(vec2(coord)) * 2.0 - 1.0) * scale;
 
     float value = clamp(avg + offset, 0.0, 1.0);
+
+    //value *= pow(2, -roughFactor);
 
     imageStore(hMap, coord, vec4(value, value, value, 1.0));
 
@@ -250,7 +283,7 @@ void main()
 
     if(alg == 0)
     {
-        height += fbn(uv);
+        height +=  fbn(uv);
         imageStore(hMap, texel_coord, vec4(vec3(height), 1.0));
     }
     else if(alg == 1)
