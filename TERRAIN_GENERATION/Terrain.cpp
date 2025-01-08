@@ -247,7 +247,7 @@ void Terrain::ControlWND() noexcept
         ImGui::Text("HeightMap");
         ImGui::Image((void*)(intptr_t)this->GetHeightMap()->GetID(), ImVec2(150, 150));
 
-
+        ImGui::SliderInt("Algorithm", &Alg, 0, 2);
 
         ImGui::SliderInt("SEED", &seed, 1, 16);
         
@@ -269,6 +269,8 @@ void Terrain::ControlWND() noexcept
         ImGui::Text("Texture Options");
 
         ImGui::Checkbox("TriplanarTexturing", &triplanar);
+
+        ImGui::Checkbox("PBR", &PBR);
 
     }
     ImGui::End();

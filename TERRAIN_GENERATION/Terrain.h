@@ -65,14 +65,17 @@ public:
 
 
 
-        int step;
-        float scale;
+        int stepSize = 256;
+        float scale = 0.5;
    
 
 
-        int iterations;
+    int iterations;
+
+    int Alg = 2;
     
    
     float rooughWeight = 1.0;
     bool triplanar;
+    bool PBR = false;
 };

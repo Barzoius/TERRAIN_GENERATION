@@ -19,6 +19,7 @@ uniform vec3 camOrigin;
 uniform vec3 lightOrigin;
 
 uniform bool triplanar;
+uniform bool PBR;
 
 in vec3 Position;
 
@@ -193,7 +194,7 @@ vec3 DirectionLight(vec3 n)
     vec3 normal = normalize(n);
 
 
-    vec3 lightDir = normalize(Position + lightOrigin);
+    vec3 lightDir = normalize(lightOrigin - Position);
 
     float ambient = 0.20;
     vec3 ambientLight = ambient * vec3(1.0);
@@ -224,6 +225,7 @@ vec3 ComputeColor(vec3 NORMAL,
                   float roughness,
                   float metallic)
 {
+    NORMAL = normalize(NORMAL);
     vec3 RE = vec3(0.0);
 
     vec3 HALF = normalize(VIEW + LIGHT_DIR);
@@ -232,7 +234,7 @@ vec3 ComputeColor(vec3 NORMAL,
 
     float attenuation = 1.0 / (distance * distance);
 
-    vec3 radiance = vec3(1.0); // white light
+    vec3 radiance = vec3(1.0) * 3.2; // white light
 
     float NDF = TR_GGX_NDF(NORMAL, HALF, roughness);
     float GF = S_GGX_GF(max(dot(NORMAL, HALF), 0.0), roughness);
@@ -241,13 +243,13 @@ vec3 ComputeColor(vec3 NORMAL,
     float specAtt = 4.0 * max(dot(NORMAL, VIEW), 0.0) 
                         * max(dot(NORMAL, LIGHT_DIR), 0.0) + 0.0001;
 
-    vec3 specular = (NDF * GF * FRESNEL) /  specAtt;
+    vec3 specular =  (NDF * GF * FRESNEL) /  specAtt;
 
     vec3 specConstant = FRESNEL;
 
-    vec3 diffConstant = vec3(1.0) - metallic ;
+    vec3 diffConstant = vec3(1.0) - 0.0;
 
-    RE += (diffConstant * albedo / PI + specular) 
+    RE += (diffConstant * albedo / PI )  // + specular
             * radiance * max(dot(NORMAL, LIGHT_DIR), 0.0);
 
     return RE;
@@ -367,30 +369,39 @@ void main()
     vec3 F0 = vec3(0.04); 
     F0 = mix(F0, finalAlbedo.rgb, finalMetallic);
 
-    vec3 lighting = DirectionLight(finalNormal);
 
-    vec3 R = vec3(0.0);
+    vec3 finalColor = vec3(0.0);
 
-
-    vec3 lightDir = normalize(lightOrigin - Position);
-    vec3 viewDir = normalize(camOrigin - Position);
-
-
-    R += ComputeColor(finalNormal, 
-                      viewDir, 
-                      lightDir, 
-                      lightOrigin, 
-                      F0, 
-                      finalAlbedo.rgb, 
-                      finalRough,
-                      finalMetallic);
+    if(PBR == true)
+    {
+        vec3 R = vec3(0.0);
 
 
-    vec3 ambient = vec3(0.03) * finalAlbedo.rgb * finalAO; 
+        vec3 lightDir = normalize(lightOrigin - Position);
+        vec3 viewDir = normalize(camOrigin - Position);
 
-    vec3 finalColor = ambient + R;
 
-    //vec3 finalColor = finalAlbedo.rgb * lighting * finalAO;
+        R += ComputeColor(finalNormal, 
+                          viewDir, 
+                          lightDir, 
+                          lightOrigin, 
+                          F0, 
+                          finalAlbedo.rgb, 
+                          finalRough,
+                          finalMetallic);
+
+
+        vec3 ambient = vec3(0.03) * finalAlbedo.rgb * finalAO; 
+
+        finalColor += ambient + R;
+
+        
+    }
+    else
+    {
+        vec3 lighting = DirectionLight(finalNormal);
+        finalColor = finalAlbedo.rgb * lighting;
+    }
 
     //finalColor = finalColor / (finalColor + vec3(1.0));
 

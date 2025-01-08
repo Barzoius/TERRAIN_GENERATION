@@ -135,6 +135,7 @@ void Application::Run()
     glBindVertexArray(VAO);
 
     glBindVertexArray(0);
+   
  
     while (!glfwWindowShouldClose(mWindow->GetWindow()))
     {
@@ -187,19 +188,66 @@ void Application::Run()
 
         terrain->GetComputeHeight()->setFloat("seed", terrain->seed);
 
+        terrain->GetComputeHeight()->setInt("alg", terrain->Alg);
+
+        if (terrain->Alg == 0 || terrain->Alg == 2)
+        {
+            glDispatchCompute((width) / 16, (width) / 16, 1);
+            glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
+        }
+        else
+        {
+            terrain->stepSize = 256;
+            terrain->scale = 0.5;
+
+            terrain->GetComputeHeight()->setInt("stepSize", terrain->stepSize);
+            terrain->GetComputeHeight()->setFloat("scale", terrain->scale);
+
+            glDispatchCompute(1, 1, 1);
+            glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+            glMemoryBarrier(GL_TEXTURE_FETCH_BARRIER_BIT);
+
+            while(terrain->stepSize > 1)
+            {
+                int halfStep = terrain->stepSize / 2;
+
+                terrain->GetComputeHeight()->setInt("stepType", 0);
+
+                terrain->GetComputeHeight()->setInt("stepSize", terrain->stepSize);
+                terrain->GetComputeHeight()->setFloat("scale", terrain->scale);
 
 
+                int numGroups = (256/ 16);
 
-        glDispatchCompute((width) / 16, (width) / 16, 1); 
-        glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
+                glDispatchCompute(numGroups, numGroups, 1);
 
+                glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
+                
+                terrain->GetComputeHeight()->setInt("stepType", 1);
+       
+
+                glDispatchCompute(numGroups, numGroups, 1);
+
+                glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
+                
+
+                terrain->stepSize /= 2;
+                terrain->scale *= 0.5;
+            }
+
+            glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+            
+        }
 
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, terrain->GetHeightMap()->GetID());
 
 
+
+
         terrain->GetComputeNormal()->use();
         terrain->GetComputeNormal()->setInt("operator", 2);
+
     
 
         glDispatchCompute((width) / 16, (width) / 16, 1);
@@ -240,6 +288,8 @@ void Application::Run()
         terrain->GetShader()->setInt("METALLIC", 6);
 
         terrain->GetShader()->setBool("triplanar", terrain->triplanar);
+
+        terrain->GetShader()->setBool("PBR", terrain->PBR);
 
 
      
