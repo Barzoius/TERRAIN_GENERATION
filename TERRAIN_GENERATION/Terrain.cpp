@@ -247,6 +247,8 @@ void Terrain::ControlWND() noexcept
         ImGui::Text("HeightMap");
         ImGui::Image((void*)(intptr_t)this->GetHeightMap()->GetID(), ImVec2(150, 150));
 
+        ImGui::Checkbox("Noise(Value/Perlin)", &noise);
+
         ImGui::SliderInt("Algorithm", &Alg, 0, 2);
 
         ImGui::SliderInt("SEED", &seed, 1, 16);
@@ -266,7 +268,9 @@ void Terrain::ControlWND() noexcept
         //ImGui::SliderFloat("RoughFactor", &roughFactor, 1.0, 8.0);
 
         ImGui::Text("NormalMap");
+        ImGui::SliderInt("Operator", &Operator, 0, 2);
         ImGui::Image((void*)(intptr_t)this->GetNormalMap()->GetID(), ImVec2(150, 150));
+
 
 
         ImGui::Text("Texture Options");

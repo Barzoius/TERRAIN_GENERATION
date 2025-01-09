@@ -178,6 +178,8 @@ void Application::Run()
         terrain->GetHeightMap()->Bind();
 
         terrain->GetComputeHeight()->use();
+
+        terrain->GetComputeHeight()->setBool("noiseType", terrain->noise);
         terrain->GetComputeHeight()->setInt("iterations", terrain->iterations);
         terrain->GetComputeHeight()->setVec2("resolution", (float)width, (float)width);
         terrain->GetComputeHeight()->setInt("octaves", terrain->octaves);
@@ -248,7 +250,7 @@ void Application::Run()
 
 
         terrain->GetComputeNormal()->use();
-        terrain->GetComputeNormal()->setInt("operator", 2);
+        terrain->GetComputeNormal()->setInt("operator", terrain->Operator);
 
     
 

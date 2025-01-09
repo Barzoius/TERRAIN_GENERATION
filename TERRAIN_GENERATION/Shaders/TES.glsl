@@ -27,7 +27,7 @@ out vec3 Bitangent;
 void main()
 {
 
-    float u = gl_TessCoord.x;
+    float u = gl_TessCoord.x; // coord of current vertex within patch
     float v = gl_TessCoord.y;
 
     vec2 t00 = TextureCoord[0];

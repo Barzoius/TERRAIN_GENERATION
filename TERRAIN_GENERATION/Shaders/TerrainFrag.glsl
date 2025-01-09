@@ -62,7 +62,10 @@ vec4 BombIT(sampler2DArray tex, vec3 uv, int layer)
     vec2 p = floor( uv.xy );
     vec2 f = fract( uv.xy );
 
-    vec4 va = vec4( 0.0 );
+    //accumulated weighted color contributions from nearby texture samples
+    vec4 va = vec4( 0.0 ); 
+
+    //total weight of all contributions, used for normalization
     float wt = 0.0;
 
     for( int j=-1; j<=1; j++ )
@@ -75,7 +78,7 @@ vec4 BombIT(sampler2DArray tex, vec3 uv, int layer)
             vec2 r = g - f + o.xy;
 
             float d = dot(r,r);
-            float w = exp(-5.0*d );
+            float w = exp(-5.0*d ); // gaussian falloff
 
             vec4 c = texture(tex, vec3(uv.xy + o.zw, layer));
 

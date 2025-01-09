@@ -36,7 +36,22 @@ different methods to simulate natural terrain features.
 | FF16 | FF32 | FF64 |
 |---|---|---|
 | ![](TERRAIN_GENERATION/Resources/ForReadME/FF16.png)  | ![](TERRAIN_GENERATION/Resources/ForReadME/FF32.png)| ![](TERRAIN_GENERATION/Resources/ForReadME/FF64.png)  |
+
+With mean filter:
+
+| FF16 | FF32 | FF64 |
+|---|---|---|
+| ![](TERRAIN_GENERATION/Resources/ForReadME/FFB16.png)  | ![](TERRAIN_GENERATION/Resources/ForReadME/FFB32.png)| ![](TERRAIN_GENERATION/Resources/ForReadME/FFB64.png)  |
+
+### Midpoint Displacemant
+
 ### Fractal Brownian Noise
+
+| Value | Perlin |
+|---|---|
+| ![](TERRAIN_GENERATION/Resources/ForReadME/value.png)  | ![](TERRAIN_GENERATION/Resources/ForReadME/perlin.png)| 
+
+
 
 ## NormalMap Generation
 

@@ -14,10 +14,10 @@ uniform mat4 view;
 
 uniform float roughWeight;
 
-const int MIN_TESS_LEVEL = 4;
-const int MAX_TESS_LEVEL = 32;
-const float MIN_DISTANCE = 60;
-const float MAX_DISTANCE = 800;
+const int MIN_TESS_LEVEL = 1;
+const int MAX_TESS_LEVEL = 8;
+const float MIN_DISTANCE = 10;
+const float MAX_DISTANCE = 100;
 
 
 float computeRoughness2(vec2 uv) {
@@ -63,26 +63,31 @@ void main()
         float tessLevelDist3 = mix( MAX_TESS_LEVEL, MIN_TESS_LEVEL, min(distance11, distance10) );
 
 
-        vec2 uv00 = TextureCoord[0];
-        vec2 uv01 = TextureCoord[1];
-        vec2 uv10 = TextureCoord[2];
-        vec2 uv11 = TextureCoord[3];
+        //vec2 uv00 = TextureCoord[0];
+        //vec2 uv01 = TextureCoord[1];
+        //vec2 uv10 = TextureCoord[2];
+        //vec2 uv11 = TextureCoord[3];
 
-        float roughness00 = computeRoughness2(uv00);
-        float roughness01 = computeRoughness2(uv01);
-        float roughness10 = computeRoughness2(uv10);
-        float roughness11 = computeRoughness2(uv11);
+        //float roughness00 = computeRoughness2(uv00);
+        //float roughness01 = computeRoughness2(uv01);
+        //float roughness10 = computeRoughness2(uv10);
+        //float roughness11 = computeRoughness2(uv11);
 
-        float tessLevelRough0 = mix( MIN_TESS_LEVEL, MAX_TESS_LEVEL, roughness00 );
-        float tessLevelRough1 = mix( MIN_TESS_LEVEL, MAX_TESS_LEVEL, roughness01 );
-        float tessLevelRough2 = mix( MIN_TESS_LEVEL, MAX_TESS_LEVEL, roughness10 );
-        float tessLevelRough3 = mix( MIN_TESS_LEVEL, MAX_TESS_LEVEL, roughness11 );
+        //float tessLevelRough0 = mix( MIN_TESS_LEVEL, MAX_TESS_LEVEL, roughness00 );
+        //float tessLevelRough1 = mix( MIN_TESS_LEVEL, MAX_TESS_LEVEL, roughness01 );
+        //float tessLevelRough2 = mix( MIN_TESS_LEVEL, MAX_TESS_LEVEL, roughness10 );
+        //float tessLevelRough3 = mix( MIN_TESS_LEVEL, MAX_TESS_LEVEL, roughness11 );
 
 
-        gl_TessLevelOuter[0] = mix(tessLevelDist0, tessLevelRough0, roughWeight);
-        gl_TessLevelOuter[1] = mix(tessLevelDist1, tessLevelRough1, roughWeight);
-        gl_TessLevelOuter[2] = mix(tessLevelDist2, tessLevelRough2, roughWeight);
-        gl_TessLevelOuter[3] = mix(tessLevelDist3, tessLevelRough3, roughWeight);
+        //gl_TessLevelOuter[0] = mix(tessLevelDist0, tessLevelRough0, roughWeight);
+        //gl_TessLevelOuter[1] = mix(tessLevelDist1, tessLevelRough1, roughWeight);
+        //gl_TessLevelOuter[2] = mix(tessLevelDist2, tessLevelRough2, roughWeight);
+        //gl_TessLevelOuter[3] = mix(tessLevelDist3, tessLevelRough3, roughWeight);
+
+        gl_TessLevelOuter[0] = tessLevelDist0;
+        gl_TessLevelOuter[1] = tessLevelDist1;
+        gl_TessLevelOuter[2] = tessLevelDist2;
+        gl_TessLevelOuter[3] = tessLevelDist3;
 
         gl_TessLevelInner[0] = max(gl_TessLevelOuter[1], gl_TessLevelOuter[3]);
         gl_TessLevelInner[1] = max(gl_TessLevelOuter[0], gl_TessLevelOuter[2]);

@@ -59,9 +59,9 @@ public:
 
         int octaves = 1.0;
         float lacunarity = 1.0;
-        float persistance = 1.0;
-        float noise_scale = 1.0;
-        float exponent = 1.0;
+        float persistance = 0.5f;
+        float noise_scale = 2.0f;
+        float exponent = 1.0f;
 
 
 
@@ -81,4 +81,8 @@ public:
     bool bombIT = false;
     bool triplanar;
     bool PBR = false;
+
+    bool noise = false;
+
+    int Operator = 0;
 };

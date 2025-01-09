@@ -32,6 +32,8 @@ uniform int stepType;
 
 uniform float roughFactor;
 
+uniform bool noiseType;
+
 ///-----------------------------RANDS-----------------------------///
 
 vec2 hash(vec2 p) {
@@ -104,7 +106,8 @@ float pNoise(in vec2 uv)
     float dotTL = dot(c, toTL);
     float dotTR = dot(d, toTR);
 
-    gridUV = smoothstep(0.0, 1.0, gridUV);
+    //gridUV = smoothstep(0.0, 1.0, gridUV);
+    gridUV = gridUV * gridUV * (3.0 - 2.0 * gridUV);
 
     float B = mix(dotBL, dotBR, gridUV.x);
     float T = mix(dotTL, dotTR, gridUV.x);
@@ -118,7 +121,7 @@ float pNoise(in vec2 uv)
 
 float fbn (in vec2 st) {
     // Initial values
-    st = st * 2.0 - 1.0;
+    st = st * 2.0 - 1;
 
     float value = 0.0;
     float amplitude = .5;
@@ -126,15 +129,24 @@ float fbn (in vec2 st) {
     float weight = 0.0;
 
 
-    for (int i = 0; i < octaves; i++) {
+    for (int i = 0; i < octaves; i++) 
+    {
         vec2 ss = (frequency * 2.0 * st);
-        value += amplitude * (0.5 *  noise(ss));
+
+        if(noiseType == false)
+        {
+            value += amplitude * (0.5 *  noise(ss));
+        }
+        else
+        {
+            value += amplitude * (0.5 *  pNoise(ss)); 
+        }
 
         weight += amplitude;
-        frequency *= 2.0;
-        amplitude *= .5;
+        frequency *= lacunarity;
+        amplitude *= .5; 
     }
-    float height = value / weight;
+    float height = value ;
     return height;
 }
 

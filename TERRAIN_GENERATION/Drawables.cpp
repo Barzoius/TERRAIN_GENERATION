@@ -43,6 +43,7 @@ void Drawable::Draw(glm::mat4& viewMatrix, glm::mat4& projMatrix) const noexcept
     }
     int rez = 40;
 
+
     glDrawArrays(GL_PATCHES, 0, 4 * rez * rez);
     //glDrawElements(GL_TRIANGLES, (GLsizei)pElemBuffer->GetIndiciesCount(), GL_UNSIGNED_INT, 0);
 

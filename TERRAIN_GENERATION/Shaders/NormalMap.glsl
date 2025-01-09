@@ -171,12 +171,16 @@ void main()
 
     barrier();
 
-    if(operator == 1)
+    if(operator == 0)
     {
         prewitt();
     }
+    else if(operator == 1)
+    {
+        sobel();
+    }
     else if(operator == 2)
     {
-        prewitt();
+        scharr();
     }
 }
