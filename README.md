@@ -35,9 +35,21 @@ different methods to simulate natural terrain features.
 
 ### Fault Formation
 
+This technique works by randomly generating a line on the height maps at each iteration and then setting a random 
+altitude on one side of the fault line.
+
 | FF16 | FF32 | FF64 |
 |---|---|---|
 | ![](TERRAIN_GENERATION/Resources/ForReadME/FF16.png)  | ![](TERRAIN_GENERATION/Resources/ForReadME/FF32.png)| ![](TERRAIN_GENERATION/Resources/ForReadME/FF64.png)  |
+
+This is not the end of the algorithm, as it is necessary 
+to smooth the edges created by the lines. 
+In the original source, this is done by processing 
+the height map in strips and adjusting the 
+altitude values based on the previous ones. 
+However, since I used compute shaders,
+this sequential approach would not have worked, 
+so I opted for applying a blur filter over the height map.
 
 With mean filter:
 
@@ -143,7 +155,7 @@ $$
 Triplanar Texture Mapping is a an alternative to the basic UV mapping. 
 It projects the texture onto the terrain model from three different 
 planes (X, Y, and Z axes) and blends the results together. This offers a more
-natural look the my terrain.
+natural look to my terrain.
 
 | TTM Off | TTM On | 
 |---|---|
@@ -184,3 +196,9 @@ and metallic).
 <img src="TERRAIN_GENERATION/Resources/ForReadME/third.png" alt="Framework Diagram" style="width:100%;">
 
 <img src="TERRAIN_GENERATION/Resources/ForReadME/forth.png" alt="Framework Diagram" style="width:100%;">
+
+
+# References
+
+- Focus On 3D Terrain Programming by Trent Polack.
+- GPU Gems (Chapter 20) by Nvidia
