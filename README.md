@@ -81,7 +81,7 @@ G_x = \begin{bmatrix}
 \end{bmatrix}, \quad
 G_y = \begin{bmatrix}
 -1 & -1 & -1 \\
-0 & 0 & 0 \\
+ 0 &  0 &  0 \\
 1 & 1 & 1
 \end{bmatrix}
 $$
@@ -140,6 +140,11 @@ $$
 
 ## Triplanar Texture Mapping
 
+Triplanar Texture Mapping is a an alternative to the basic UV mapping. 
+It projects the texture onto the terrain model from three different 
+planes (X, Y, and Z axes) and blends the results together. This offers a more
+natural look the my terrain.
+
 | TTM Off | TTM On | 
 |---|---|
 | ![](TERRAIN_GENERATION/Resources/ForReadME/simple.png)  | ![](TERRAIN_GENERATION/Resources/ForReadME/triplanar.png)| 
@@ -147,11 +152,32 @@ $$
 
 ## Texture Bombing
 
-| Bombinb Off | Bombing On | 
+Texture Bombing is a method for reducing the tiling effect
+of a texture. The idea is usually to sample the texture 
+from multiple locations with different scales, 
+orientations, or blending. I implemented a variation 
+that simulates a form of Voronoi pattern. 
+It works by considering the texture as a grid, 
+and for each grid cell we sample from, we also sample 
+from all 8 surrounding cells and blend them proportionally 
+to their distance from the center cell.
+
+| Bombing Off | Bombing On | 
 |---|---|
 | ![](TERRAIN_GENERATION/Resources/ForReadME/noBomb.png)  | ![](TERRAIN_GENERATION/Resources/ForReadME/withBomb.png)| 
 
-# First Results
+## Note on Texturing and Performance
+
+Even though I achieved a pretty pleasant result, the usage of 
+both triplanar texturing and texture bombing resulted in 
+a performance hit. This is because, compared to simple UV texturing, 
+where I would only sample the textures once, now with 3 
+samples from triplanar texturing and 9 more from texture bombing, 
+I sample 60 times per material (albedo, AO, normal, roughness
+and metallic).
+
+
+# Some of the first results
 
 <img src="TERRAIN_GENERATION/Resources/ForReadME/Second.png" alt="Framework Diagram" style="width:100%;">
 
