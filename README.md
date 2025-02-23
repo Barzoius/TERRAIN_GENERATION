@@ -58,6 +58,74 @@ With mean filter:
 
 ## NormalMap Generation
 
+To generate normals, I create normal maps directly from 
+height maps using convolution kernels. 
+These 3x3 matrices are convolved with the image 
+to calculate the pixel intensity gradients, 
+typically used for edge detection. 
+Here, I calculate the gradient for each pixel, 
+corresponding to the surface normals, via
+compute shader in parallel.
+
+### Prewitt Operator
+
+The Prewitt operator uses uniform weights for differentiation. 
+It is less robust against noise, which can lead to results that
+ are more sensitive to unwanted local variations in the height map.
+
+$$
+G_x = \begin{bmatrix}
+-1 & 0 & 1 \\
+-1 & 0 & 1 \\
+-1 & 0 & 1
+\end{bmatrix}, \quad
+G_y = \begin{bmatrix}
+-1 & -1 & -1 \\
+0 & 0 & 0 \\
+1 & 1 & 1
+\end{bmatrix}
+$$
+
+
+### Sobel Operator
+
+The Sobel operator uses weighted smoothing to reduce noise 
+and achieve sharper edges. It applies higher weights to the 
+central pixels, which helps reduce the impact of noise.
+
+$$
+G_x = \begin{bmatrix}
+1 & 0 & 1 \\
+2 & 0 & 2 \\
+1 & 0 & 1
+\end{bmatrix}, \quad
+G_y = \begin{bmatrix}
+1 & 2 & 1 \\
+0 & 0 & 0 \\
+1 & 2 & 1
+\end{bmatrix}
+$$
+
+
+### Scharr Operator
+
+The Scharr operator is an improved version of 
+the Sobel operator, 
+offering better approximations for fine details.
+
+$$
+G_x = \begin{bmatrix}
+3 & 0 & 3 \\
+10 & 0 & 10 \\
+3 & 0 & 3
+\end{bmatrix}, \quad
+G_y = \begin{bmatrix}
+3 & 10 & 3 \\
+0 & 0 & 0 \\
+3 & 10 & 3
+\end{bmatrix}
+$$
+
 | Prewitt | Sobel | Scharr |
 |---|---|---|
 | ![](TERRAIN_GENERATION/Resources/ForReadME/prewitt.png)  | ![](TERRAIN_GENERATION/Resources/ForReadME/sobel.png)| ![](TERRAIN_GENERATION/Resources/ForReadME/scharr.png)  |

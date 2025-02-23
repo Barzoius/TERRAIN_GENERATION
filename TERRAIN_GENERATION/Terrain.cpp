@@ -118,7 +118,6 @@ void Terrain::SetMaterialData(int rez)
     albedos->Bind();
     albedos->LoadTexture2DArray(albedoPATHS);
     albedos->SetParams();
-    //albedos->Unbind();
 
     //std::cout << albedos->GetUnit() << std::endl;
     ///-------------------------------------AO-------------------------------------///
@@ -138,8 +137,6 @@ void Terrain::SetMaterialData(int rez)
     aos->Bind();
     aos->LoadTexture2DArray(aoPATHS);
     aos->SetParams();
-    //aos->Unbind();
-
     //std::cout << aos->GetUnit() << std::endl;
     ///----------------------------------ROUGHNESS----------------------------------///
 
@@ -157,7 +154,6 @@ void Terrain::SetMaterialData(int rez)
     roughness->Bind();
     roughness->LoadTexture2DArray(roughnessPATHS);
     roughness->SetParams();
-    //roughness->Unbind();
 
     ///-----------------------------------NORMAL-----------------------------------///
 
@@ -175,7 +171,6 @@ void Terrain::SetMaterialData(int rez)
     normals->Bind();
     normals->LoadTexture2DArray(normalPATHS);
     normals->SetParams();
-    //normals->Unbind();
 
 
     ///----------------------------------METALLIC----------------------------------///
@@ -194,7 +189,6 @@ void Terrain::SetMaterialData(int rez)
     heights->Bind();
     heights->LoadTexture2DArray(heightPATHS);
     heights->SetParams();
-    //heights->Unbind();
 
 }
 
